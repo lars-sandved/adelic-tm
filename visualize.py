@@ -31,11 +31,11 @@ def print_comparison(results: list[StepComparison], title: str = "TM-Adele Corre
         # Adelic components
         a2 = r.adele.padic_parts[2]
         a3 = r.adele.padic_parts[3]
-        a5 = r.adele.padic_parts[5]
+        a_s = r.adele.padic_parts[23]
         print(f"  Adele: a_inf={r.adele.real_part:.0f}  "
               f"a_2=...{a2.digit_string(8)}  "
               f"a_3=...{a3.digit_string(8)}  "
-              f"a_5=...{a5.digit_string(4)}")
+              f"a_5=...{a_s.digit_string(4)}")
 
         # Norms
         norms = r.adele.norms()
@@ -160,7 +160,7 @@ the binary tape, and arithmetic in Z_2 IS the computation.
 
         a2 = r.adele.padic_parts[2]
         a3 = r.adele.padic_parts[3]
-        a5 = r.adele.padic_parts[5]
+        a_s = r.adele.padic_parts[23]
 
         state_names = {0: 'A/q0', 1: 'B/q1', 2: 'C', 3: 'HALT'}
 
@@ -174,7 +174,7 @@ the binary tape, and arithmetic in Z_2 IS the computation.
     a_inf={r.adele.real_part:.0f} &nbsp;
     a_2=...{a2.digit_string(8)} &nbsp;
     a_3=...{a3.digit_string(8)} &nbsp;
-    a_5=...{a5.digit_string(4)}
+    a_5=...{a_s.digit_string(4)}
   </span>
 </div>
 """)

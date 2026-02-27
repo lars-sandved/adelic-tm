@@ -172,6 +172,6 @@ def adelic_increment(adele: Adele) -> Adele:
 
     new_parts = dict(adele.padic_parts)
     new_parts[2] = new_alpha_2
-    new_parts[23] = PAdic.from_int(23, 1, adele.padic_parts[5].precision)
+    new_parts[23] = PAdic.from_int(23, 1, adele.padic_parts[23].precision)
 
     return Adele(real_part=adele.real_part + 1.0, padic_parts=new_parts)
