@@ -60,7 +60,7 @@ def tm_config_to_adele(config: TMConfig, precision: int = PRECISION) -> Adele:
     
     a_2 = tape cells right of head (including head cell), as 2-adic integer
     a_3 = tape cells left of head, as 3-adic integer (binary vals in base 3)
-    a_5 = machine state as 5-adic integer
+    a_p = machine state as p-adic integer (p = STATE_PRIME, chosen >= max state + 1)
     a_inf = step count
     """
     right_cells = config.right_of_head(precision)
@@ -69,12 +69,12 @@ def tm_config_to_adele(config: TMConfig, precision: int = PRECISION) -> Adele:
     left_cells = config.left_of_head(precision)
     alpha_3 = PAdic(3, left_cells, precision)
 
-    alpha_5 = PAdic.from_int(5, config.state, precision)
+    alpha_5 = PAdic.from_int(23, config.state, precision)
     alpha_inf = float(config.step)
 
     return Adele(
         real_part=alpha_inf,
-        padic_parts={2: alpha_2, 3: alpha_3, 5: alpha_5},
+        padic_parts={2: alpha_2, 3: alpha_3, 23: alpha_5},
     )
 
 
@@ -82,7 +82,7 @@ def adele_to_tm_config(adele: Adele, precision: int = PRECISION) -> TMConfig:
     """Decode an adele back to a TM configuration. Inverse of tm_config_to_adele."""
     right_cells = twoadicto_tape(adele.padic_parts[2], precision)
     left_cells = adele.padic_parts[3].digits[:precision]
-    state = adele.padic_parts[5].digits[0]
+    state = adele.padic_parts[23].to_int() % 23
     step = int(adele.real_part)
 
     tape: dict[int, int] = {}
@@ -110,7 +110,7 @@ def adelic_step(adele: Adele, transition_table: dict) -> Adele:
     """
     alpha_2 = adele.padic_parts[2]
     alpha_3 = adele.padic_parts[3]
-    alpha_5 = adele.padic_parts[5]
+    alpha_5 = adele.padic_parts[23]
 
     current_symbol = alpha_2.mod_p()
     current_state = alpha_5.digits[0]
@@ -150,12 +150,12 @@ def adelic_step(adele: Adele, transition_table: dict) -> Adele:
         )
         new_alpha_3 = alpha_3
 
-    new_alpha_5 = PAdic.from_int(5, new_state, alpha_5.precision)
+    new_alpha_5 = PAdic.from_int(23, new_state, alpha_5.precision)
     new_real = adele.real_part + 1.0
 
     return Adele(
         real_part=new_real,
-        padic_parts={2: new_alpha_2, 3: new_alpha_3, 5: new_alpha_5},
+        padic_parts={2: new_alpha_2, 3: new_alpha_3, 23: new_alpha_5},
     )
 
 
@@ -172,6 +172,6 @@ def adelic_increment(adele: Adele) -> Adele:
 
     new_parts = dict(adele.padic_parts)
     new_parts[2] = new_alpha_2
-    new_parts[5] = PAdic.from_int(5, 1, adele.padic_parts[5].precision)
+    new_parts[23] = PAdic.from_int(23, 1, adele.padic_parts[5].precision)
 
     return Adele(real_part=adele.real_part + 1.0, padic_parts=new_parts)
