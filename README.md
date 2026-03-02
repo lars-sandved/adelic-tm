@@ -1,134 +1,118 @@
-# Adelic-TM: Continued Fraction Architecture
+# Adelic-TM: Turing Machines via Adelic Number Theory
 
-**Proof of principle** implementing Turing machines using adelic number theory with the continued fraction (CF) approach.
+Proof of principle: encoding Turing machine computation in the adele ring, where the **tape lives at the real place** and the **state machine lives at the p-adic places**.
 
-## The Architecture
+## The Core Idea
 
-This implementation follows the correct architecture identified by Emmett Shear:
+A Turing machine has two parts: **data** (tape) and **control** (state machine).
+An adele has two parts: the **real place** (∞) and the **p-adic places** (2, 3, 5, ...).
 
-| TM Component | Adelic Component |
-|--------------|------------------|
-| **Tape** (data) | **Real place** α∞ encoded as continued fraction |
-| **State machine** (control) | **p-adic places** α₂, α₃, ... (state as residue mod prime) |
-| **One step of computation** | **Gauss map** G(x) = 1/(x - ⌊x⌋) |
+These match up:
 
-The tape is a rational number whose continued fraction expansion encodes the sequence of symbols. Each application of the Gauss map reads one CF digit (= one tape symbol) and advances the head.
+| TM Component | Adelic Component | Operation |
+|---|---|---|
+| **Tape** | α_∞ ∈ ℝ (continued fraction) | Gauss map reads/advances |
+| **State machine** | α_2 ∈ ℤ_2 (p-adic integer) | Multiplication updates state |
+| **One computation step** | Coupled evolution of (α_∞, α_2) | Read from ℝ, write to ℤ_2 |
 
-## The Gauss Map
+The adele α = (α_∞, α_2) evolves at each step:
+1. **Read** from α_∞ via the Gauss map G(x) = 1/(x − ⌊x⌋)
+2. **Transition** α_2 via p-adic arithmetic: α_2 → α_2 · 2^symbol
+3. **State** = v_2(α_2) mod 2 — read directly from the 2-adic valuation
 
-The Gauss map peels off CF digits one at a time:
+No separate state variable. The state IS the p-adic structure.
 
-```
-G(x) = 1/(x - ⌊x⌋)
-```
+## Genuine Adelic Parity Checker
 
-For x = [a₀; a₁, a₂, ...]:
-1. Read digit: a₀ = ⌊x⌋
-2. Advance: G(x) = [a₁; a₂, ...]
+The flagship example: determine if a binary string has an even or odd number of 1s.
 
-The inverse Gauss map pushes a digit onto the front:
-```
-G⁻¹(a, x) = a + 1/x = [a; a₁, a₂, ...]
-```
-
-## Parity Checker Example
-
-Input [1, 0, 1, 1] encoded as CF [2; 1, 2, 2, 3] = 65/24:
+**Input** [1, 0, 1, 1] → CF digits [2, 1, 2, 2, 3] → α_∞ = 65/24
 
 ```
-Step 1: α∞ = 65/24
-  READ: ⌊65/24⌋ = 2 → symbol 1
-  STATE: EVEN + 1 → ODD
-  GAUSS: G(65/24) = 24/17
+Start:  α = (65/24, 1)     v_2(1) = 0  → EVEN
 
-Step 2: α∞ = 24/17
-  READ: ⌊24/17⌋ = 1 → symbol 0
-  STATE: ODD + 0 → ODD
-  GAUSS: G(24/17) = 17/7
+Step 1: READ ⌊65/24⌋ = 2 → symbol 1
+        α_∞: 65/24 → 24/17          (Gauss map)
+        α_2:  1 × 2 = 2              (p-adic transition)
+        v_2(2) = 1, mod 2 = 1       → ODD
 
-Step 3: α∞ = 17/7
-  READ: ⌊17/7⌋ = 2 → symbol 1
-  STATE: ODD + 1 → EVEN
-  GAUSS: G(17/7) = 7/3
+Step 2: READ ⌊24/17⌋ = 1 → symbol 0
+        α_∞: 24/17 → 17/7
+        α_2:  2 × 1 = 2
+        v_2(2) = 1, mod 2 = 1       → ODD
 
-Step 4: α∞ = 7/3
-  READ: ⌊7/3⌋ = 2 → symbol 1
-  STATE: EVEN + 1 → ODD
-  GAUSS: G(7/3) = 3
+Step 3: READ ⌊17/7⌋ = 2 → symbol 1
+        α_∞: 17/7 → 7/3
+        α_2:  2 × 2 = 4
+        v_2(4) = 2, mod 2 = 0       → EVEN
 
-Step 5: α∞ = 3
-  READ: 3 → end marker
-  RESULT: ODD (three 1s) ✓
+Step 4: READ ⌊7/3⌋ = 2 → symbol 1
+        α_∞: 7/3 → 3
+        α_2:  4 × 2 = 8
+        v_2(8) = 3, mod 2 = 1       → ODD
+
+Step 5: READ ⌊3⌋ = 3 → end marker
+        v_2(8) = 3, mod 2 = 1       → ODD ✓  (three 1s)
 ```
 
-The Gauss map naturally unwinds the CF, and the state (tracked mod 2) gives the parity.
+The Gauss map unwinds the CF digit by digit at the real place. The 2-adic component accumulates parity via multiplication. The answer lives in v_2(α_2) mod 2.
 
-## The Product Formula
+## Why This Matters
 
-For any rational x ≠ 0:
-```
-|x|∞ × |x|₂ × |x|₃ × |x|₅ × ... = 1
-```
+The transition `α_2 → α_2 · 2^symbol` is **p-adic arithmetic**, not an arbitrary lookup table. The state lives in the algebraic structure of the number — specifically, in how many times 2 divides it.
 
-At each step, this conservation law holds. When the Gauss map changes α∞, the p-adic norms adjust automatically.
+This raises deep questions:
+- Can every finite state machine be expressed as p-adic arithmetic? (Likely yes, via CRT)
+- What conservation laws govern the coupled (α_∞, α_2) evolution?
+- What does α^n mean — can exponentiation encode multi-step computation?
 
 ## Running
 
 ```bash
-# Run examples (parity checker + incrementer)
-python examples.py
+# Genuine adelic parity checker (the main result)
+python3 genuine_adelic.py
 
-# Run unit tests
-python test_cf.py
+# Also includes CF-based TM engine with more examples
+python3 examples.py
 
-# Or with unittest
-python -m unittest test_cf -v
+# Unit tests
+python3 -m unittest test_cf -v
 ```
 
 ## Files
 
 ```
-cf_machine.py   — Core CF-based TM engine
-  encode_tape()     Encode symbol list as CF (rational)
-  gauss_map()       Apply G(x), return (digit, remainder)
-  decode_tape()     Extract all CF digits
-  AdelicTM class    Full TM implementation
+genuine_adelic.py  — Genuine adelic parity checker (state via v_2)
+cf_machine.py      — CF-based TM engine (Gauss map, encode/decode, AdelicTM class)
+examples.py        — Parity checker and incrementer demos (cf_machine version)
+test_cf.py         — Unit tests (26 tests, product formula verification)
+docs/              — Theory writeup (adelic-tm-from-scratch.md)
+```
 
-examples.py     — Parity checker and incrementer demos
-test_cf.py      — Unit tests with product formula verification
+### Legacy files (from initial p-adic-tape approach, kept for reference)
+```
+adelic.py, padic.py, turing.py, correspondence.py, universal.py
 ```
 
 ## Symbol Encoding
 
-CF digits must be ≥ 1, so symbols are mapped:
-- 0 → CF digit 1
-- 1 → CF digit 2
-- end marker → CF digit 3
-
-Custom mappings can be provided.
-
-## Key Features
-
-- **Exact arithmetic**: Uses `fractions.Fraction` throughout (no floating point)
-- **No external dependencies**: Pure Python standard library
-- **Dual-tape model**: Supports read-write machines with left/right movement
-- **Product formula verification**: Each step verifies ∏|x|ᵥ = 1
-
-## Mathematical Context
-
-This demonstrates that:
-
-1. The Gauss map provides a natural "read head" operation
-2. CF expansion is reversible (inverse Gauss = write)
-3. Rational arithmetic encodes TM computation exactly
-4. The product formula acts as a conservation law
-
-The p-adic components track discrete state while the real component holds the (infinite) tape data. The adelic structure couples them through the product formula.
+CF digits must be ≥ 1:
+- Symbol 0 → CF digit 1
+- Symbol 1 → CF digit 2
+- End marker → CF digit 3
 
 ## Requirements
 
 - Python 3.10+
-- No external dependencies
+- No external dependencies (pure standard library, `fractions.Fraction` for exact arithmetic)
+
+## Architecture History
+
+1. **v1** (initial): Tape in p-adics, state in reals. Worked but adelic structure was decorative — branching logic lived in Python, not number theory.
+
+2. **v2** (CF architecture): Tape at real place as CF, state tracked separately. Gauss map does genuine computational work. But state was still a "Python variable."
+
+3. **v3** (genuine adelic): Adele α = (α_∞, α_2) with independent components. State IS the 2-adic valuation. Transition IS p-adic multiplication. No separate state variable.
 
 ## License
 
