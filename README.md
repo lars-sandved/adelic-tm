@@ -1,103 +1,134 @@
-# Adelic-TM: Turing Machines ↔ Adelic Arithmetic
+# Adelic-TM: Continued Fraction Architecture
 
-**Proof of principle** demonstrating a concrete correspondence between Turing machine operations and arithmetic in the adele ring 𝔸_ℚ.
+**Proof of principle** implementing Turing machines using adelic number theory with the continued fraction (CF) approach.
 
-## The Core Idea
+## The Architecture
 
-A **p-adic integer** in ℤ₂ is a formal sum b₀ + b₁·2 + b₂·4 + ... where each bᵢ ∈ {0,1}. This is *exactly* a one-sided infinite binary tape. The 2-adic integers **are** binary tapes.
+This implementation follows the correct architecture identified by Emmett Shear:
 
-An **adele** α = (α_∞, α₂, α₃, α₅, ...) packages a real number with p-adic numbers at every prime. We use this to encode a complete TM configuration:
+| TM Component | Adelic Component |
+|--------------|------------------|
+| **Tape** (data) | **Real place** α∞ encoded as continued fraction |
+| **State machine** (control) | **p-adic places** α₂, α₃, ... (state as residue mod prime) |
+| **One step of computation** | **Gauss map** G(x) = 1/(x - ⌊x⌋) |
 
-| Component | Encodes | Why this prime? |
-|-----------|---------|-----------------|
-| α₂ ∈ ℤ₂ | Tape right of head | Binary tape cells = 2-adic digits |
-| α₃ ∈ ℤ₃ | Tape left of head | Separate prime = independent component |
-| α₅ ∈ ℤ₅ | Machine state | Third prime for third data channel |
-| α_∞ ∈ ℝ | Step counter | Archimedean place tracks "time" |
+The tape is a rational number whose continued fraction expansion encodes the sequence of symbols. Each application of the Gauss map reads one CF digit (= one tape symbol) and advances the head.
 
-## Key Result: Binary Increment = +1 in ℤ₂
+## The Gauss Map
 
-The binary incrementer TM adds 1 to a binary number via carry propagation. For input 23 = 10111₂, it flips bits one at a time:
+The Gauss map peels off CF digits one at a time:
 
 ```
-Step 0: 10111  (23)
-Step 1: 10110  (carry...)
-Step 2: 10100  (carry...)
-Step 3: 10000  (carry...)
-Step 4: 11000  (24, done!)
+G(x) = 1/(x - ⌊x⌋)
 ```
 
-The TM needs 4 steps. In ℤ₂, this is a **single operation**: 23 + 1 = 24. The carry propagation that the TM performs step-by-step is exactly what happens in 2-adic addition — but the adelic view does it "all at once."
+For x = [a₀; a₁, a₂, ...]:
+1. Read digit: a₀ = ⌊x⌋
+2. Advance: G(x) = [a₁; a₂, ...]
 
-This is verified by the code: both the step-by-step adelic simulation and the direct +1 operation produce identical results.
+The inverse Gauss map pushes a digit onto the front:
+```
+G⁻¹(a, x) = a + 1/x = [a; a₁, a₂, ...]
+```
+
+## Parity Checker Example
+
+Input [1, 0, 1, 1] encoded as CF [2; 1, 2, 2, 3] = 65/24:
+
+```
+Step 1: α∞ = 65/24
+  READ: ⌊65/24⌋ = 2 → symbol 1
+  STATE: EVEN + 1 → ODD
+  GAUSS: G(65/24) = 24/17
+
+Step 2: α∞ = 24/17
+  READ: ⌊24/17⌋ = 1 → symbol 0
+  STATE: ODD + 0 → ODD
+  GAUSS: G(24/17) = 17/7
+
+Step 3: α∞ = 17/7
+  READ: ⌊17/7⌋ = 2 → symbol 1
+  STATE: ODD + 1 → EVEN
+  GAUSS: G(17/7) = 7/3
+
+Step 4: α∞ = 7/3
+  READ: ⌊7/3⌋ = 2 → symbol 1
+  STATE: EVEN + 1 → ODD
+  GAUSS: G(7/3) = 3
+
+Step 5: α∞ = 3
+  READ: 3 → end marker
+  RESULT: ODD (three 1s) ✓
+```
+
+The Gauss map naturally unwinds the CF, and the state (tracked mod 2) gives the parity.
+
+## The Product Formula
+
+For any rational x ≠ 0:
+```
+|x|∞ × |x|₂ × |x|₃ × |x|₅ × ... = 1
+```
+
+At each step, this conservation law holds. When the Gauss map changes α∞, the p-adic norms adjust automatically.
 
 ## Running
 
 ```bash
-# Binary incrementer (default: 23 → 24)
-python main.py increment
+# Run examples (parity checker + incrementer)
+python examples.py
 
-# Custom starting number
-python main.py increment --start 255
+# Run unit tests
+python test_cf.py
 
-# 3-state busy beaver (6 ones in 14 steps)
-python main.py beaver
-
-# Generate HTML report
-python main.py increment --html report.html
+# Or with unittest
+python -m unittest test_cf -v
 ```
 
-## Example Output
+## Files
 
 ```
-========================================================================
-  Direct Correspondence: Binary Increment = +1 in Z_2
-========================================================================
+cf_machine.py   — Core CF-based TM engine
+  encode_tape()     Encode symbol list as CF (rational)
+  gauss_map()       Apply G(x), return (digit, remainder)
+  decode_tape()     Extract all CF digits
+  AdelicTM class    Full TM implementation
 
-  Start value:  23  (0b10111)
-  End value:    24  (0b11000)
-  TM steps needed: 4 (carry propagation)
-
-  2-adic before:  23
-  2-adic after:   24
-  Difference:     1  (should be 1)
-
-  VERIFIED: The TM's 4-step carry propagation
-  is exactly +1 in Z_2. Adelic arithmetic captures the
-  full computation in a single operation.
+examples.py     — Parity checker and incrementer demos
+test_cf.py      — Unit tests with product formula verification
 ```
 
-## Architecture
+## Symbol Encoding
 
-```
-turing.py         — TM simulator with execution tracing
-padic.py          — p-adic integer arithmetic
-adelic.py         — Adele ring elements + TM config encoding
-correspondence.py — Parallel execution + verification
-visualize.py      — Terminal + HTML visualization
-main.py           — CLI entry point
-SPEC.md           — Full mathematical specification
-```
+CF digits must be ≥ 1, so symbols are mapped:
+- 0 → CF digit 1
+- 1 → CF digit 2
+- end marker → CF digit 3
+
+Custom mappings can be provided.
+
+## Key Features
+
+- **Exact arithmetic**: Uses `fractions.Fraction` throughout (no floating point)
+- **No external dependencies**: Pure Python standard library
+- **Dual-tape model**: Supports read-write machines with left/right movement
+- **Product formula verification**: Each step verifies ∏|x|ᵥ = 1
 
 ## Mathematical Context
 
-This is a proof-of-principle for a larger research question: **can the adelic structure naturally encode universal computation?**
+This demonstrates that:
 
-The weak claim (any TM can be encoded arithmetically) is trivial. The strong claim is that the adelic decomposition into primes corresponds to something meaningful about the computation — that different primes track different aspects of the computation independently, and the product formula (∏ᵥ |α|ᵥ = 1) acts as a conservation law.
+1. The Gauss map provides a natural "read head" operation
+2. CF expansion is reversible (inverse Gauss = write)
+3. Rational arithmetic encodes TM computation exactly
+4. The product formula acts as a conservation law
 
-The binary incrementer demonstrates the cleanest case: the computation lives entirely in the 2-adic component, and arithmetic **is** the computation. The busy beaver demonstrates the general encoding where multiple primes collaborate.
-
-### Next Steps
-
-1. **Universality test**: Encode the (15,2) Neary-Woods strongly universal machine
-2. **Adelic gradient descent**: Formalize Emmett's "step in the Archimedean place, primes adjust via tree pruning"
-3. **Product formula as conservation law**: Investigate what ∏|α|ᵥ = 1 means for computation
-4. **ProtoNum connection**: Can the F₁ → adeles path (from HoTT proto-numbers) be made precise?
+The p-adic components track discrete state while the real component holds the (infinite) tape data. The adelic structure couples them through the product formula.
 
 ## Requirements
 
 - Python 3.10+
-- No external dependencies (pure standard library)
+- No external dependencies
 
 ## License
 
