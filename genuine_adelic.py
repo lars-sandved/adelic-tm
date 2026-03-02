@@ -1,138 +1,153 @@
 """
-Experiment: Can the state live IN the rational number's p-adic structure?
+Genuine Adelic Parity Checker
 
-RESULT: Not with a single rational number and the Gauss map. Here's why:
+The adele α = (α_∞, α_2) where:
+  - α_∞ ∈ ℝ: the tape, encoded as a continued fraction
+  - α_2 ∈ ℤ_2: the state, evolved via multiplication
 
-APPROACH 1: Standard Gauss map, read state from v_2
-  The standard CF uniquely determines the rational number.
-  Tape [1,0,1,1] -> 65/24 -> Gauss orbit: 65/24, 24/17, 17/7, 7/3, 3
-  Their v_2 values: -3, 3, 0, 0, 0
-  v_2 mod 2:         1, 1, 0, 0, 0
-  States needed:     0, 1, 1, 0, 1  (EVEN, ODD, ODD, EVEN, ODD)
-  -> NO MATCH. The tape content fixes the factorization; no freedom for state.
+Each step:
+  1. READ from α_∞: extract CF digit via Gauss map
+  2. WRITE to α_2: multiply by 2 if symbol=1, by 1 if symbol=0
+  3. ADVANCE α_∞: apply Gauss map
 
-APPROACH 2: Generalized Gauss map G_b(x) = b/(x-a), b encodes transition
-  b=2 for symbol 1 (flip v_2), b=1 for symbol 0 (keep v_2).
-  v_2 tracking works for one step! But b != 1 CORRUPTS the tape:
-  G_2(65/24) = 48/17, floor(48/17) = 2 -> reads symbol 1
-  But original tape[1] = 0 (should read symbol 0)
-  The modified numerator changes ALL subsequent CF digits.
+State is NEVER tracked in a separate variable.
+It is read from v_2(α_2) mod 2 whenever needed.
 
-APPROACH 3: Encode b-values into initial number as generalized CF
-  x = 2 + 2/(1 + 1/(2 + 2/(2 + 2/3))) = 52/15
-  But floor(52/15) = 3, not 2. The b>1 makes the tail > 1,
-  breaking the floor-based digit extraction.
-
-FUNDAMENTAL TENSION: In a single rational number, the real structure
-(CF digits = tape) and p-adic structure (valuations = state) are NOT
-independent. The product formula COUPLES them: changing one changes the other.
-This is precisely what makes adeles interesting, but it means you can't
-separately encode tape and state in the same rational.
-
-For genuinely adelic computation, we likely need:
-  (a) Actual adeles (independent real + p-adic components), not just rationals
-  (b) A non-diagonal embedding where real and p-adic parts have separate DoF
-  (c) Something more subtle about how Emmett's architecture works
-
-This is a KEY QUESTION for Emmett.
+The transition function is p-adic arithmetic: α_2 → α_2 · 2^symbol
 """
 
 from fractions import Fraction
 from math import floor
 
 
-def v_p(x, p):
-    """p-adic valuation of rational x."""
+def v_2(x):
+    """2-adic valuation of an integer."""
     if x == 0:
         return float('inf')
-    num, den = abs(x.numerator), abs(x.denominator)
-    val = 0
-    while num % p == 0: num //= p; val += 1
-    while den % p == 0: den //= p; val -= 1
-    return val
+    n = abs(x)
+    v = 0
+    while n % 2 == 0:
+        n //= 2
+        v += 1
+    return v
 
 
-def demonstrate_the_problem():
-    """Show concretely why state can't live in v_2 of a single rational."""
-    
-    print("="*70)
-    print("  CAN THE STATE LIVE IN v_2(x) mod 2?")
-    print("="*70)
-    
-    # Standard Gauss map trace
-    print("\n--- Approach 1: Standard Gauss map, read v_2 ---\n")
-    x = Fraction(65, 24)
-    xs = [x]
-    digits = []
-    for _ in range(4):
-        a = floor(x)
-        digits.append(a)
-        frac = x - a
-        if frac == 0: break
-        x = Fraction(1) / frac
-        xs.append(x)
-    
-    states_needed = [0, 1, 1, 0, 1]
-    state_names = {0: "EVEN", 1: "ODD"}
-    
-    print(f"  Tape: [1, 0, 1, 1]")
-    print(f"  {'x':>12s}  {'v_2':>4s}  {'v2%2':>4s}  {'need':>4s}  {'match':>5s}")
-    for i, xi in enumerate(xs):
-        v2 = v_p(xi, 2)
-        need = states_needed[i]
-        got = v2 % 2
-        match = "✓" if got == need else "✗"
-        print(f"  {str(xi):>12s}  {v2:>4d}  {got:>4d}  {need:>4d}  {match:>5s}")
-    
-    print(f"\n  RESULT: v_2 mod 2 does NOT track parity state.")
-    print(f"  The CF digits fix the rational, which fixes all valuations.")
-    print(f"  Zero degrees of freedom for state encoding.\n")
-    
-    # Modified Gauss map
-    print("--- Approach 2: Generalized Gauss map G_b(x) = b/(x-a) ---\n")
-    
-    x = Fraction(65, 24)
-    tape = [1, 0, 1, 1]
-    inv_map = {1: 0, 2: 1, 3: 'end'}
-    
-    print(f"  Step 1: x = {x}, v_2 = {v_p(x, 2)}")
+def gauss_map(x):
+    """Standard Gauss map G(x) = 1/(x - floor(x)). Returns (digit, remainder)."""
     a = floor(x)
-    symbol = inv_map[a]
-    print(f"  Read digit {a} -> symbol {symbol} ✓ (correct)")
-    
-    b = 2  # flip for symbol 1
-    new_x = Fraction(b) / (x - a)
-    print(f"  G_2(x) = 2/({x}-{a}) = {new_x}")
-    print(f"  v_2({new_x}) = {v_p(new_x, 2)}, mod 2 = {v_p(new_x, 2) % 2}")
-    print(f"  v_2 flipped: {v_p(x,2)%2} -> {v_p(new_x,2)%2} ✓ (parity tracking works!)")
-    print()
-    
-    a2 = floor(new_x)
-    symbol2 = inv_map.get(a2, f"?({a2})")
-    print(f"  Step 2: x = {new_x}, floor = {a2} -> symbol {symbol2}")
-    print(f"  But tape[1] = {tape[1]} (symbol 0, should read digit 1)")
-    print(f"  TAPE CORRUPTED: b=2 changed the CF structure ✗")
-    print()
-    
-    # Fundamental tension
-    print("--- The Fundamental Tension ---\n")
-    print("  In a rational number, the CF (real structure) and the")
-    print("  prime factorization (p-adic structure) are the SAME data")
-    print("  viewed differently. You cannot change one independently.")
-    print()
-    print("  The product formula couples them: |x|_∞ × ∏|x|_p = 1")
-    print("  This IS the computation — but it means tape ↔ state")
-    print("  coupling is total, not partial.")
-    print()
-    print("  For Emmett's architecture to work, we likely need:")
-    print("  (a) Genuine adeles with independent components, OR")
-    print("  (b) The computation fundamentally WRITES the tape")
-    print("      (modified CF = modified tape = the computation), OR")  
-    print("  (c) A more subtle encoding we haven't seen yet")
-    print()
-    print("  This is the key question for Emmett: how does the state")
-    print("  machine live in the p-adics INDEPENDENTLY of the tape?")
+    frac = x - a
+    if frac == 0:
+        return a, Fraction(0)
+    return a, Fraction(1) / frac
+
+
+def encode_tape(symbols):
+    """Encode tape as CF. 0→1, 1→2, end→3."""
+    sym_map = {0: 1, 1: 2}
+    digits = [sym_map[s] for s in symbols] + [3]
+    x = Fraction(digits[-1])
+    for i in range(len(digits) - 2, -1, -1):
+        x = Fraction(digits[i]) + Fraction(1) / x
+    return x
+
+
+def adelic_parity(tape, verbose=True):
+    """Run parity checker as a genuine adelic computation.
+
+    The adele α = (α_inf, α_2):
+      α_inf: rational number encoding the tape (real place)
+      α_2:   integer tracking state via 2-adic valuation
+
+    No separate state variable. State = v_2(α_2) mod 2.
+    """
+    digit_to_symbol = {1: 0, 2: 1, 3: 'end'}
+
+    # Initial adele
+    alpha_inf = encode_tape(tape)
+    alpha_2 = 1  # v_2(1) = 0, mod 2 = 0 → EVEN
+
+    if verbose:
+        print(f"\n{'='*60}")
+        print(f"  ADELIC PARITY CHECKER")
+        print(f"  α = (α_∞, α_2) — no separate state variable")
+        print(f"{'='*60}")
+        print(f"  Tape: {tape}")
+        print(f"  α_∞ = {alpha_inf}  α_2 = {alpha_2}")
+        print(f"  v_2(α_2) = {v_2(alpha_2)}, mod 2 = {v_2(alpha_2) % 2} → EVEN")
+        print()
+
+    step = 0
+    while True:
+        step += 1
+        digit, remainder = gauss_map(alpha_inf)
+        symbol = digit_to_symbol.get(digit, digit)
+
+        if symbol == 'end':
+            parity = v_2(alpha_2) % 2
+            result = "ODD" if parity == 1 else "EVEN"
+            if verbose:
+                print(f"  Step {step}: READ ⌊{alpha_inf}⌋ = {digit} → end")
+                print(f"  α_2 = {alpha_2}, v_2 = {v_2(alpha_2)}, mod 2 = {parity}")
+                print(f"  RESULT: {result}")
+            return result
+
+        # The adelic transition: α_2 → α_2 · 2^symbol
+        # This is p-adic arithmetic, not a Python state flip.
+        multiplier = 2 ** symbol
+        new_alpha_2 = alpha_2 * multiplier
+
+        if verbose:
+            v_before = v_2(alpha_2) % 2
+            v_after = v_2(new_alpha_2) % 2
+            before = "EVEN" if v_before == 0 else "ODD"
+            after = "EVEN" if v_after == 0 else "ODD"
+            print(f"  Step {step}: READ ⌊{alpha_inf}⌋ = {digit} → sym {symbol}")
+            print(f"    α_∞: {alpha_inf} → {remainder}")
+            print(f"    α_2: {alpha_2} × {multiplier} = {new_alpha_2}"
+                  f"  [v_2: {v_2(alpha_2)}→{v_2(new_alpha_2)},"
+                  f" {before}→{after}]")
+            print()
+
+        alpha_inf = remainder
+        alpha_2 = new_alpha_2
+
+        if step > 100:
+            return "TIMEOUT"
+
+
+def run_tests():
+    print(f"\n{'='*60}")
+    print(f"  TEST SUITE")
+    print(f"{'='*60}\n")
+
+    tests = [
+        ([1, 0, 1, 1], "ODD"),
+        ([1, 1], "EVEN"),
+        ([0, 0, 0], "EVEN"),
+        ([1], "ODD"),
+        ([1, 0, 1, 0, 1], "ODD"),
+        ([1, 1, 1, 1], "EVEN"),
+        ([0], "EVEN"),
+        ([1, 0], "ODD"),
+        ([], "EVEN"),
+    ]
+
+    passed = 0
+    for tape, expected in tests:
+        result = adelic_parity(tape, verbose=False)
+        ok = result == expected
+        if ok:
+            passed += 1
+        print(f"  {'✓' if ok else '✗'} {str(tape):20s} → {result:4s} (expected {expected})")
+
+    print(f"\n  {passed}/{len(tests)} passed")
+    if passed == len(tests):
+        print(f"\n  State tracked entirely via v_2(α_2) mod 2.")
+        print(f"  Transition is p-adic arithmetic: α_2 → α_2 · 2^symbol")
+    return passed == len(tests)
 
 
 if __name__ == "__main__":
-    demonstrate_the_problem()
+    adelic_parity([1, 0, 1, 1], verbose=True)
+    print()
+    run_tests()
