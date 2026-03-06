@@ -1,119 +1,93 @@
-# Adelic-TM: Turing Machines via Adelic Number Theory
+# Adelic-TM: Turing Machines as Möbius Transformations
 
-Proof of principle: encoding Turing machine computation in the adele ring, where the **tape lives at the real place** and the **state machine lives at the p-adic places**.
+Encoding Turing machine computation as products of GL(2,ℤ) matrices acting on continued fractions — the **Möbius-Shear framework**.
+
+Based on [Emmett Shear's "Möbius Transformations on the Adeles as Computational Steps"](docs/emmett-mobius-adele-2026-03-05.pdf).
 
 ## The Core Idea
 
-A Turing machine has two parts: **data** (tape) and **control** (state machine).
-An adele has two parts: the **real place** (∞) and the **p-adic places** (2, 3, 5, ...).
+A Turing machine tape is a pair of continued fractions (left, right stacks). Each computational step is a Möbius transformation — a 2×2 integer matrix acting on ℚ via `x ↦ (ax+b)/(cx+d)`.
 
-These match up:
-
-| TM Component | Adelic Component | Operation |
+| TM Operation | Matrix | Name |
 |---|---|---|
-| **Tape** | α_∞ ∈ ℝ (continued fraction) | Gauss map reads/advances |
-| **State machine** | α_2 ∈ ℤ_2 (p-adic integer) | Multiplication updates state |
-| **One computation step** | Coupled evolution of (α_∞, α_2) | Read from ℝ, write to ℤ_2 |
+| Push symbol k onto stack | `P_k = [[k,1],[1,0]]` | Push matrix |
+| Pop symbol k from stack | `Q_k = [[0,1],[1,-k]]` | Pop matrix (P_k⁻¹) |
+| Right move (read a, write w) | Q_a on R, P_w on L | Pop-right, push-left |
+| Left move | Q_a on R, P_w on R, P_b on R, Q_b on L | Compound move |
 
-The adele α = (α_∞, α_2) evolves at each step:
-1. **Read** from α_∞ via the Gauss map G(x) = 1/(x − ⌊x⌋)
-2. **Transition** α_2 via p-adic arithmetic: α_2 → α_2 · 2^symbol
-3. **State** = v_2(α_2) mod 2 — read directly from the 2-adic valuation
+A full computation of n steps becomes a **Shear expansion**: a single matrix product Φ = M₁ · M₂ · ... · Mₙ that encodes the entire computation.
 
-No separate state variable. The state IS the p-adic structure.
-
-## Genuine Adelic Parity Checker
-
-The flagship example: determine if a binary string has an even or odd number of 1s.
-
-**Input** [1, 0, 1, 1] → CF digits [2, 1, 2, 2, 3] → α_∞ = 65/24
+## Structure
 
 ```
-Start:  α = (65/24, 1)     v_2(1) = 0  → EVEN
+src/
+├── spec.py          # Machine/input validation, JSON loading
+├── mobius.py         # MobiusMatrix (GL(2,ℤ)) + ShearFactor
+├── cf.py            # CFStack — exact continued fraction arithmetic
+├── shear.py         # ShearExpansion — per-stack matrix products
+├── selectors.py     # CRT packing, Lagrange interpolation, Mem diagnostics
+├── divergence.py    # ℵ-condition divergence monitoring
+├── lean_export.py   # Lean 4 proof generation
+└── core.py          # MobiusComputer — unified runner
 
-Step 1: READ ⌊65/24⌋ = 2 → symbol 1
-        α_∞: 65/24 → 24/17          (Gauss map)
-        α_2:  1 × 2 = 2              (p-adic transition)
-        v_2(2) = 1, mod 2 = 1       → ODD
+tests/
+└── test_mobius_computer.py   # 32 tests across 9 phases
 
-Step 2: READ ⌊24/17⌋ = 1 → symbol 0
-        α_∞: 24/17 → 17/7
-        α_2:  2 × 1 = 2
-        v_2(2) = 1, mod 2 = 1       → ODD
-
-Step 3: READ ⌊17/7⌋ = 2 → symbol 1
-        α_∞: 17/7 → 7/3
-        α_2:  2 × 2 = 4
-        v_2(4) = 2, mod 2 = 0       → EVEN
-
-Step 4: READ ⌊7/3⌋ = 2 → symbol 1
-        α_∞: 7/3 → 3
-        α_2:  4 × 2 = 8
-        v_2(8) = 3, mod 2 = 1       → ODD
-
-Step 5: READ ⌊3⌋ = 3 → end marker
-        v_2(8) = 3, mod 2 = 1       → ODD ✓  (three 1s)
+examples/
+├── bb3_machine.json          # Busy Beaver 3-state champion
+├── bb3_input.json
+├── library_machines/         # Corpus from Emmett's MobiusMachine
+└── library_inputs/
 ```
 
-The Gauss map unwinds the CF digit by digit at the real place. The 2-adic component accumulates parity via multiplication. The answer lives in v_2(α_2) mod 2.
+## Quick Start
 
-## Why This Matters
+```python
+from src.spec import load_machine, load_input
+from src.core import MobiusComputer
 
-The transition `α_2 → α_2 · 2^symbol` is **p-adic arithmetic**, not an arbitrary lookup table. The state lives in the algebraic structure of the number — specifically, in how many times 2 divides it.
+machine = load_machine("examples/bb3_machine.json")
+inp = load_input("examples/bb3_input.json")
+mc = MobiusComputer(machine, inp, mode="direct", verify=True)
+result = mc.run()
 
-This raises deep questions:
-- Can every finite state machine be expressed as p-adic arithmetic? (Likely yes, via CRT)
-- What conservation laws govern the coupled (α_∞, α_2) evolution?
-- What does α^n mean — can exponentiation encode multi-step computation?
+print(f"Status: {result.status}")           # HALT
+print(f"Steps: {result.steps}")             # 13
+print(f"Emet: {result.emet.is_emet}")       # False (Mem fails for BB3)
+print(f"Φ_R = {mc.shear_expansion.phi_R}")  # [(-1,4),(0,1)]
+print(f"Φ_L = {mc.shear_expansion.phi_L}")  # [(-5,22),(-2,9)]
+```
 
-## Running
+## The Emet Conditions
+
+A machine run satisfies **Emet** (אמת — "truth") when three conditions hold:
+
+- **ℵ (Aleph)**: No crash or divergence — all partial quotients stay bounded
+- **Mem (מ)**: The CRT selector is total — transition residues are distinct mod N
+- **Tav (ת)**: The computation halts
+
+BB(3) satisfies ℵ and Tav but fails Mem (gcd(d,q) = gcd(2,4) = 2).
+
+## Running Tests
 
 ```bash
-# Genuine adelic parity checker (the main result)
-python3 genuine_adelic.py
-
-# Also includes CF-based TM engine with more examples
-python3 examples.py
-
-# Unit tests
-python3 -m unittest test_cf -v
+python3 -m pytest tests/ -v
 ```
 
-## Files
+## Lean 4 Export
 
-```
-genuine_adelic.py  — Genuine adelic parity checker (state via v_2)
-cf_machine.py      — CF-based TM engine (Gauss map, encode/decode, AdelicTM class)
-examples.py        — Parity checker and incrementer demos (cf_machine version)
-test_cf.py         — Unit tests (26 tests, product formula verification)
-docs/              — Theory writeup (adelic-tm-from-scratch.md)
+```python
+lean_code = mc.export_lean("BB3")
+print(lean_code)  # Lean 4 proof that Φ = M₁ · M₂ · ... · M₁₃
 ```
 
-### Legacy files (from initial p-adic-tape approach, kept for reference)
-```
-adelic.py, padic.py, turing.py, correspondence.py, universal.py
-```
+## History
 
-## Symbol Encoding
+This repo evolved through several experimental phases:
+1. **CF-architecture** — tape as continued fractions, state in p-adics
+2. **Genuine adelic** — parity checker using 2-adic valuations
+3. **Rational dynamics** — Collatz-style maps for TM steps
+4. **Shape/magnitude transducer** — finite-state CF decomposition
+5. **Möbius-Shear** → current framework (Emmett's formulation)
 
-CF digits must be ≥ 1:
-- Symbol 0 → CF digit 1
-- Symbol 1 → CF digit 2
-- End marker → CF digit 3
-
-## Requirements
-
-- Python 3.10+
-- No external dependencies (pure standard library, `fractions.Fraction` for exact arithmetic)
-
-## Architecture History
-
-1. **v1** (initial): Tape in p-adics, state in reals. Worked but adelic structure was decorative — branching logic lived in Python, not number theory.
-
-2. **v2** (CF architecture): Tape at real place as CF, state tracked separately. Gauss map does genuine computational work. But state was still a "Python variable."
-
-3. **v3** (genuine adelic): Adele α = (α_∞, α_2) with independent components. State IS the 2-adic valuation. Transition IS p-adic multiplication. No separate state variable.
-
-## License
-
-MIT
+Earlier experiments are preserved in git history. The `archive/` directory contains the original monolithic implementation.

@@ -1,0 +1,15 @@
+{
+  "alphabet_size": 2,
+  "blank_symbol": 0,
+  "states": ["A", "B", "C", "HALT"],
+  "start_state": "A",
+  "halt_states": ["HALT"],
+  "transitions": [
+    {"state": "A", "read": 0, "write": 1, "move": "R", "next_state": "B"},
+    {"state": "A", "read": 1, "write": 1, "move": "L", "next_state": "C"},
+    {"state": "B", "read": 0, "write": 1, "move": "L", "next_state": "A"},
+    {"state": "B", "read": 1, "write": 1, "move": "R", "next_state": "B"},
+    {"state": "C", "read": 0, "write": 1, "move": "L", "next_state": "B"},
+    {"state": "C", "read": 1, "write": 1, "move": "R", "next_state": "HALT"}
+  ]
+}

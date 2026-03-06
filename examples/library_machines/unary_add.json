@@ -1,0 +1,67 @@
+{
+  "alphabet_size": 3,
+  "blank_symbol": 0,
+  "halt_states": [
+    "halt"
+  ],
+  "start_state": "seek_sep",
+  "states": [
+    "seek_sep",
+    "check_right",
+    "promote_left",
+    "at_sep",
+    "erase_sep",
+    "halt"
+  ],
+  "transitions": [
+    {
+      "move": "R",
+      "next_state": "seek_sep",
+      "read": 1,
+      "state": "seek_sep",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "check_right",
+      "read": 2,
+      "state": "seek_sep",
+      "write": 2
+    },
+    {
+      "move": "L",
+      "next_state": "promote_left",
+      "read": 1,
+      "state": "check_right",
+      "write": 2
+    },
+    {
+      "move": "L",
+      "next_state": "erase_sep",
+      "read": 0,
+      "state": "check_right",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "at_sep",
+      "read": 2,
+      "state": "promote_left",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "check_right",
+      "read": 2,
+      "state": "at_sep",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "halt",
+      "read": 2,
+      "state": "erase_sep",
+      "write": 0
+    }
+  ]
+}
