@@ -16,6 +16,7 @@ from .lean_export import export_lean as _lean_export
 from .mobius import MobiusMatrix, ShearFactor
 from .selectors import (
     SelectorError, MemCheckReport, check_mem_totality, select_transition,
+    select_transition_prime, check_prime_field, PrimeFieldReport,
 )
 from .shear import ShearExpansion
 from .spec import InputSpec, MachineSpec, Transition
@@ -149,9 +150,11 @@ class MobiusComputer:
             raise ValueError(f"input state not in machine states: {self._state}")
 
     def _lookup_transition(self, state: str, read_ext: int) -> Transition:
-        """Get transition via direct lookup or selector."""
+        """Get transition via direct lookup, CRT selector, or prime field selector."""
         if self.mode == "selector":
             return select_transition(self.machine, state, read_ext)
+        elif self.mode == "prime":
+            return select_transition_prime(self.machine, state, read_ext)
         t = self.machine.transition_map.get((state, read_ext))
         if t is None:
             raise _CrashError(f"undefined transition for state={state}, read={read_ext}")
@@ -319,15 +322,23 @@ class MobiusComputer:
         if self._result is None:
             return
         r = self._result
-        mem_report = check_mem_totality(self.machine)
         aleph = r.status not in ("CRASH", "DIVERGE")
-        mem = mem_report.is_total
         tav = r.status == "HALT"
         notes = []
+
+        # Mem check depends on selector mode
+        if self.mode == "prime":
+            pf_report = check_prime_field(self.machine)
+            mem = pf_report.is_total  # always True for prime field
+            notes.append(f"Mem via 𝔽_{pf_report.prime} (prime field selector)")
+        else:
+            mem_report = check_mem_totality(self.machine)
+            mem = mem_report.is_total
+            if not mem:
+                notes.append("Mem failed: selector denominator non-units in ℤ/Nℤ")
+
         if not aleph:
             notes.append(f"ℵ failed: {r.crash_reason or self._divergence.reason or 'crash/diverge'}")
-        if not mem:
-            notes.append("Mem failed: selector denominator non-units in ℤ/Nℤ")
         if not tav:
             notes.append("Tav failed: computation did not halt")
         r.emet = EmetReport(

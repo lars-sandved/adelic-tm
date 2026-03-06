@@ -1,8 +1,15 @@
-"""CRT packing, arithmetic selectors, and Mem diagnostics.
+"""Arithmetic selectors and Mem diagnostics.
 
-Implements the ℤ/Nℤ selector from Emmett's paper. When denominators
-in Lagrange interpolation are non-units, that's the Mem condition —
-the selector crashes explicitly rather than producing wrong results.
+Two selector modes:
+
+1. **CRT selector** (ℤ/Nℤ, N=d×q) — Emmett's original design.
+   Uses Chinese Remainder Theorem packing. Fails when denominators
+   in Lagrange interpolation are non-units (Mem violation).
+
+2. **Prime field selector** (𝔽_P, P = smallest prime ≥ #transitions) —
+   Lagrange interpolation over a prime field, which is guaranteed to
+   work for ANY machine. Every nonzero element is invertible in a field,
+   so the Mem condition is trivially satisfied.
 """
 
 from __future__ import annotations
@@ -188,3 +195,124 @@ def select_transition(machine: MachineSpec, state: str, read_symbol: int) -> Tra
         )
 
     return transition
+
+
+# ---------------------------------------------------------------------------
+# Prime field selector (𝔽_P)
+# ---------------------------------------------------------------------------
+
+def _next_prime(n: int) -> int:
+    """Smallest prime ≥ n."""
+    if n <= 2:
+        return 2
+    candidate = n if n % 2 != 0 else n + 1
+    while True:
+        if _is_prime(candidate):
+            return candidate
+        candidate += 2
+
+
+def _is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    if n < 4:
+        return True
+    if n % 2 == 0 or n % 3 == 0:
+        return False
+    d = 5
+    while d * d <= n:
+        if n % d == 0 or n % (d + 2) == 0:
+            return False
+        d += 6
+    return True
+
+
+def prime_field_modulus(machine: MachineSpec) -> int:
+    """Return the prime P used for the 𝔽_P selector.
+
+    P must be ≥ d*q (the index space), not just ≥ number of transitions,
+    because indices range from 0 to d*q - 1 and must be distinct mod P.
+    """
+    index_space = machine.alphabet_size * len(machine.states)
+    return _next_prime(index_space)
+
+
+def pack_index(read_symbol: int, state: str, machine: MachineSpec) -> int:
+    """Pack (read, state) into a simple linear index.
+
+    index = read_symbol * q + state_index, where q = len(states).
+    All values are in {0, ..., d*q - 1}, guaranteed < P.
+    """
+    state_idx = {s: i for i, s in enumerate(machine.states)}
+    q = len(machine.states)
+    return read_symbol * q + state_idx[state]
+
+
+def build_prime_field_cases(machine: MachineSpec) -> list[tuple[Transition, int]]:
+    """Assign each transition a unique index for prime field interpolation."""
+    state_idx = {s: i for i, s in enumerate(machine.states)}
+    q = len(machine.states)
+    cases: list[tuple[Transition, int]] = []
+    for t in machine.transitions:
+        idx = t.read * q + state_idx[t.state]
+        cases.append((t, idx))
+    return cases
+
+
+def select_transition_prime(machine: MachineSpec, state: str, read_symbol: int) -> Transition:
+    """Select transition using Lagrange interpolation over 𝔽_P.
+
+    Works for ANY machine — no coprimality conditions needed.
+    P is the smallest prime ≥ number of transition cases.
+    """
+    P = prime_field_modulus(machine)
+    u = pack_index(read_symbol, state, machine)
+    cases = build_prime_field_cases(machine)
+
+    # Lagrange basis polynomials evaluated at u, over 𝔽_P
+    for i, (ti, ri) in enumerate(cases):
+        basis = 1
+        for j, (_, rj) in enumerate(cases):
+            if i == j:
+                continue
+            denom = (ri - rj) % P
+            # In 𝔽_P every nonzero element is invertible
+            assert denom != 0, f"duplicate indices: ri={ri} rj={rj}"
+            numer = (u - rj) % P
+            basis = (basis * numer * pow(denom, -1, P)) % P
+
+        if basis == 1:
+            # This is the matching transition
+            if ti.state != state or ti.read != read_symbol:
+                raise SelectorError(
+                    f"prime selector chose wrong transition: "
+                    f"expected ({state}, {read_symbol}), got ({ti.state}, {ti.read})"
+                )
+            return ti
+
+    raise SelectorError(
+        f"prime selector found no matching transition for ({state}, {read_symbol}), u={u}"
+    )
+
+
+@dataclass(frozen=True)
+class PrimeFieldReport:
+    """Diagnostics for the prime field selector."""
+    prime: int
+    num_transitions: int
+    case_indices: list[tuple[str, int]]
+    is_total: bool  # always True for prime field
+
+
+def check_prime_field(machine: MachineSpec) -> PrimeFieldReport:
+    """Diagnostic report for the prime field selector."""
+    P = prime_field_modulus(machine)
+    cases = build_prime_field_cases(machine)
+    indices = [(t.case_id, idx) for t, idx in cases]
+    # Check uniqueness
+    idx_set = {idx for _, idx in cases}
+    is_total = len(idx_set) == len(cases)  # should always be True
+    return PrimeFieldReport(
+        prime=P, num_transitions=len(cases),
+        case_indices=indices, is_total=is_total,
+    )

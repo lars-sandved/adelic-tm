@@ -14,7 +14,7 @@ from src.spec import MachineSpec, InputSpec, load_machine, load_input
 from src.mobius import MobiusMatrix, ShearFactor
 from src.cf import CFStack, cf_value_from_stack
 from src.shear import ShearExpansion
-from src.selectors import check_mem_totality, SelectorError
+from src.selectors import check_mem_totality, check_prime_field, SelectorError
 from src.divergence import DivergencePolicy
 from src.core import MobiusComputer, RunResult
 
@@ -276,6 +276,78 @@ class TestSelector:
         result = mc.run()
         assert result.status == "HALT"
         assert result.steps == 1
+
+
+# ===========================================================================
+# Phase 5b: Prime field selector
+# ===========================================================================
+
+class TestPrimeFieldSelector:
+    def test_prime_field_report_bb3(self, bb3_machine):
+        """BB(3) prime field selector uses P=11 (d*q=8 → smallest prime ≥ 8)."""
+        report = check_prime_field(bb3_machine)
+        assert report.prime == 11
+        assert report.num_transitions == 6
+        assert report.is_total is True
+
+    def test_bb3_prime_mode_halts(self, bb3_machine, bb3_input):
+        """BB(3) via prime field selector: same result as direct mode."""
+        mc = MobiusComputer(bb3_machine, bb3_input, mode="prime", verify=True)
+        result = mc.run()
+        assert result.status == "HALT"
+        assert result.steps == 13
+
+    def test_bb3_prime_mode_same_tape(self, bb3_machine, bb3_input):
+        """Prime mode produces identical tape to direct mode."""
+        mc_direct = MobiusComputer(bb3_machine, bb3_input, mode="direct", verify=False)
+        mc_prime = MobiusComputer(bb3_machine, bb3_input, mode="prime", verify=False)
+        r_direct = mc_direct.run()
+        r_prime = mc_prime.run()
+        assert r_direct.final_left == r_prime.final_left
+        assert r_direct.final_right == r_prime.final_right
+
+    def test_bb3_prime_mode_same_shear(self, bb3_machine, bb3_input):
+        """Prime mode produces identical Shear expansion to direct mode."""
+        mc_direct = MobiusComputer(bb3_machine, bb3_input, mode="direct", verify=False)
+        mc_prime = MobiusComputer(bb3_machine, bb3_input, mode="prime", verify=False)
+        mc_direct.run()
+        mc_prime.run()
+        assert mc_direct.shear_expansion.phi_R == mc_prime.shear_expansion.phi_R
+        assert mc_direct.shear_expansion.phi_L == mc_prime.shear_expansion.phi_L
+
+    def test_bb3_prime_mode_emet(self, bb3_machine, bb3_input):
+        """BB(3) in prime mode satisfies FULL Emet (ℵ + Mem + Tav)."""
+        mc = MobiusComputer(bb3_machine, bb3_input, mode="prime", verify=True)
+        result = mc.run()
+        assert result.emet.aleph is True
+        assert result.emet.mem is True
+        assert result.emet.tav is True
+        assert result.emet.is_emet is True
+
+    def test_bb3_prime_mode_trace_matches(self, bb3_machine, bb3_input):
+        """Every step's state sequence matches direct mode."""
+        mc_direct = MobiusComputer(bb3_machine, bb3_input, mode="direct", verify=False)
+        mc_prime = MobiusComputer(bb3_machine, bb3_input, mode="prime", verify=False)
+        r_direct = mc_direct.run()
+        r_prime = mc_prime.run()
+        assert [r.pre_state for r in r_direct.trace] == [r.pre_state for r in r_prime.trace]
+        assert [r.read_symbol for r in r_direct.trace] == [r.read_symbol for r in r_prime.trace]
+        assert [r.write_symbol for r in r_direct.trace] == [r.write_symbol for r in r_prime.trace]
+
+    def test_library_machines_prime_mode(self):
+        """All library machines work with prime field selector."""
+        for name in ["unary_add", "unary_parity", "binary_add", "unary_multiply"]:
+            machine_path = EXAMPLES / "library_machines" / f"{name}.json"
+            input_path = EXAMPLES / "library_inputs" / f"{name}.input.json"
+            if not machine_path.exists():
+                continue
+            machine = load_machine(machine_path)
+            inp = load_input(input_path) if input_path.exists() else InputSpec()
+            mc = MobiusComputer(machine, inp, mode="prime", verify=True)
+            result = mc.run()
+            assert result.status == "HALT", f"{name} failed in prime mode: {result.crash_reason}"
+            assert result.emet.mem is True, f"{name} Mem should be True in prime mode"
+            assert result.emet.is_emet is True, f"{name} should achieve full Emet in prime mode"
 
 
 # ===========================================================================
