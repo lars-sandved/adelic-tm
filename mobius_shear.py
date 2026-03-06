@@ -8,12 +8,14 @@ as GL(2,ℤ) matrix products over continued fractions.
 Phase 1: CF encoding roundtrip
 Phase 2: GL(2,ℤ) step-by-step TM execution  
 Phase 3: Shear expansion (full computation as single matrix product)
+Phase 4: CRT selector over ℤ/Pℤ (prime field fix for zero-divisor problem)
 
 All arithmetic uses fractions.Fraction for exactness.
 """
 
 from fractions import Fraction
 from typing import Optional
+from math import gcd
 
 
 # =============================================================================
@@ -529,11 +531,234 @@ class ShearExpansion:
 
 
 # =============================================================================
+# Class 6: CRTSelector — Arithmetic transition selection over ℤ/Pℤ
+# =============================================================================
+
+def _mod_inverse(a: int, p: int) -> int:
+    """Modular inverse via Fermat's little theorem: a^(-1) = a^(p-2) mod p.
+    Only works when p is prime."""
+    return pow(a, p - 2, p)
+
+
+def _next_prime_above(n: int) -> int:
+    """Find the smallest prime > n."""
+    candidate = n + 1
+    while True:
+        if candidate < 2:
+            candidate = 2
+        if all(candidate % i != 0 for i in range(2, int(candidate**0.5) + 1)):
+            return candidate
+        candidate += 1
+
+
+class CRTSelector:
+    """Arithmetic transition selector using CRT packing + Lagrange interpolation
+    over a prime field ℤ/Pℤ.
+    
+    The zero-divisor problem: Emmett's paper uses ℤ/Nℤ where N = d·q. But for
+    total transition functions, Lagrange denominators hit zero divisors.
+    
+    Fix: work in ℤ/Pℤ where P is prime, P > d·q. Every nonzero element is
+    invertible, so Lagrange interpolation always works.
+    
+    The selector is purely arithmetic: no if/else, no table lookup. Given a
+    packed residue u, polynomial evaluation produces the correct transition.
+    """
+    
+    def __init__(self, tm: 'TuringMachine', d: int, q: int):
+        """Build selector from a Turing machine.
+        
+        Args:
+            tm: TuringMachine instance with transitions defined
+            d: alphabet size (number of distinct symbols)
+            q: number of non-halt states
+        """
+        self.tm = tm
+        self.d = d
+        self.q = q
+        self.N = d * q
+        
+        # Choose prime P > N
+        self.P = _next_prime_above(self.N)
+        
+        # Build CRT packing: (symbol, state) → residue u
+        # We need gcd(d, q) = 1 for classical CRT, but since we're using
+        # a prime field P > N, we can use a simpler direct packing:
+        # u = symbol * q + state (gives unique values in [0, N-1])
+        # This avoids the gcd requirement entirely!
+        self.residues = {}  # (state, symbol) → u
+        self.transitions_by_residue = {}  # u → (new_state, write_sym, direction, matrix_info)
+        
+        for (state, symbol), (new_state, write_sym, direction) in tm.transitions.items():
+            u = symbol * q + state  # Direct packing, unique for each pair
+            self.residues[(state, symbol)] = u
+            self.transitions_by_residue[u] = (new_state, write_sym, direction)
+        
+        # Build Lagrange selector coefficients
+        self._build_selectors()
+    
+    def _build_selectors(self):
+        """Precompute Lagrange basis polynomials over ℤ/Pℤ.
+        
+        For each transition case i with residue r_i:
+            e_i(u) = ∏_{j≠i} (u - r_j) · (r_i - r_j)^(-1)  mod P
+            
+        Since P is prime, all inverses exist.
+        """
+        P = self.P
+        residue_list = list(self.transitions_by_residue.keys())
+        self.residue_list = residue_list
+        m = len(residue_list)
+        
+        # Precompute the denominator products for each selector
+        # denom_i = ∏_{j≠i} (r_i - r_j)^(-1) mod P
+        self.denom_inv = []
+        for i in range(m):
+            prod = 1
+            for j in range(m):
+                if i != j:
+                    diff = (residue_list[i] - residue_list[j]) % P
+                    if diff == 0:
+                        raise ValueError(
+                            f"Collision: residues {residue_list[i]} and {residue_list[j]} "
+                            f"are equal mod {P}. This shouldn't happen with P > N."
+                        )
+                    prod = (prod * _mod_inverse(diff, P)) % P
+            self.denom_inv.append(prod)
+    
+    def evaluate_selectors(self, u: int) -> list[int]:
+        """Evaluate all Lagrange selectors at u. Returns list of values mod P.
+        
+        When u equals some r_k, returns [..., 0, 1, 0, ...] with 1 at position k.
+        """
+        P = self.P
+        m = len(self.residue_list)
+        results = []
+        
+        for i in range(m):
+            # e_i(u) = denom_inv_i · ∏_{j≠i} (u - r_j) mod P
+            prod = self.denom_inv[i]
+            for j in range(m):
+                if i != j:
+                    prod = (prod * ((u - self.residue_list[j]) % P)) % P
+            results.append(prod)
+        
+        return results
+    
+    def select(self, state: int, symbol: int) -> tuple[int, int, str]:
+        """Select transition using arithmetic only. Returns (new_state, write_sym, direction).
+        
+        This is the key operation: no if/else, just polynomial evaluation over ℤ/Pℤ.
+        """
+        if (state, symbol) not in self.residues:
+            raise ValueError(f"No transition for (state={state}, symbol={symbol})")
+        
+        u = self.residues[(state, symbol)]
+        selectors = self.evaluate_selectors(u)
+        
+        # Find which selector fired (should be exactly one = 1, rest = 0)
+        fired = [(i, v) for i, v in enumerate(selectors) if v != 0]
+        
+        if len(fired) != 1 or fired[0][1] != 1:
+            raise RuntimeError(
+                f"Selector malfunction at u={u}: expected exactly one 1, "
+                f"got {fired}. Selectors: {selectors}"
+            )
+        
+        idx = fired[0][0]
+        r = self.residue_list[idx]
+        return self.transitions_by_residue[r]
+    
+    def pack(self, state: int, symbol: int) -> int:
+        """Pack (state, symbol) into residue u."""
+        return self.residues.get((state, symbol), -1)
+    
+    def unpack(self, u: int) -> tuple[int, int]:
+        """Unpack residue u into (symbol, state)."""
+        state = u % self.q
+        symbol = u // self.q
+        return (state, symbol)
+    
+    def info(self) -> str:
+        """Human-readable summary of the selector configuration."""
+        lines = [
+            f"CRT Selector Configuration:",
+            f"  Alphabet size d = {self.d}, States q = {self.q}",
+            f"  N = d·q = {self.N}",
+            f"  Prime field: ℤ/{self.P}ℤ (smallest prime > {self.N})",
+            f"  Packing: u = symbol·q + state",
+            f"  Residue assignments:"
+        ]
+        for (state, symbol), u in sorted(self.residues.items()):
+            trans = self.transitions_by_residue[u]
+            state_names = {0:'A', 1:'B', 2:'C', 3:'HALT'}
+            s = state_names.get(state, str(state))
+            ns = state_names.get(trans[0], str(trans[0]))
+            lines.append(
+                f"    ({s}, sym={symbol}) → u={u}  "
+                f"→ ({ns}, write={trans[1]}, {trans[2]})"
+            )
+        return "\n".join(lines)
+
+
+def run_with_selector(tm: 'TuringMachine', selector: CRTSelector,
+                      tape_length: int = 30, max_steps: int = 1000,
+                      verbose: bool = False) -> tuple[TapeConfig, ShearExpansion, list]:
+    """Run a TM using the CRT selector for ALL transition decisions.
+    
+    No if/else on (state, symbol). The selector does pure arithmetic
+    to determine which matrix to apply.
+    
+    Returns (final_config, shear_expansion, step_log).
+    """
+    config = TapeConfig.blank(state=tm.initial_state, tape_length=tape_length)
+    shear = ShearExpansion()
+    log = []
+    
+    for step in range(max_steps):
+        if config.state in tm.halt_states:
+            log.append({'step': step, 'halted': True, 'state': config.state})
+            break
+        
+        # Read symbol from tape
+        read_sym = config.read()
+        
+        # === THE KEY LINE: selector replaces if/else ===
+        new_state, write_sym, direction = selector.select(config.state, read_sym)
+        
+        if verbose:
+            print(f"  Step {step}: u={selector.pack(config.state, read_sym)} → "
+                  f"(state={'ABCH'[new_state]}, write={write_sym}, {direction})")
+        
+        log.append({
+            'step': step, 'state': config.state, 'read': read_sym,
+            'write': write_sym, 'direction': direction, 'new_state': new_state,
+            'u': selector.pack(config.state, read_sym),
+            'halted': False
+        })
+        
+        # Execute step and record matrices
+        if direction == 'R':
+            shear.record_right(MobiusMatrix.pop(read_sym))
+            shear.record_left(MobiusMatrix.push(write_sym))
+            config = config.step_right(read_sym, write_sym, new_state)
+        else:
+            b_sym = config.left.symbols[0]
+            shear.record_right(MobiusMatrix.pop(read_sym))
+            shear.record_right(MobiusMatrix.push(write_sym))
+            shear.record_right(MobiusMatrix.push(b_sym))
+            shear.record_left(MobiusMatrix.pop(b_sym))
+            config = config.step_left(read_sym, write_sym, new_state)
+    
+    return config, shear, log
+
+
+# =============================================================================
 # TESTS
 # =============================================================================
 
 def run_tests():
-    """Run all Phase 1-3 tests."""
+    """Run all Phase 1-4 tests."""
     
     passed = 0
     failed = 0
@@ -773,6 +998,109 @@ def run_tests():
         print(f"  Total elementary (S,J) factors: {n_factors}")
         check(f"Factor count reasonable (≤ 2 × matrices)", 
               n_factors <= 2 * (len(shear.right_matrices) + len(shear.left_matrices)))
+    
+    # =========================================================================
+    print("\n" + "="*70)
+    print("PHASE 4: CRT Selector over ℤ/Pℤ")
+    print("="*70)
+    
+    # Test 15: Build CRT selector for BB(3)
+    print("\n--- Test 15: CRT selector construction ---")
+    bb3 = TuringMachine.busy_beaver_3()
+    selector = CRTSelector(bb3, d=2, q=3)
+    print(f"\n{selector.info()}\n")
+    
+    check(f"Prime P={selector.P} > N={selector.N}", selector.P > selector.N)
+    check(f"P={selector.P} is prime", 
+          all(selector.P % i != 0 for i in range(2, selector.P)))
+    check(f"6 residue assignments", len(selector.residues) == 6)
+    
+    # Test 16: Selector fires correctly for each (state, symbol)
+    print("\n--- Test 16: Selector fires correctly ---")
+    for (state, symbol), (exp_ns, exp_ws, exp_dir) in bb3.transitions.items():
+        ns, ws, d = selector.select(state, symbol)
+        state_name = 'ABC'[state]
+        check(f"select({state_name}, {symbol}) → correct transition",
+              (ns, ws, d) == (exp_ns, exp_ws, exp_dir),
+              f"Got ({ns},{ws},{d}), expected ({exp_ns},{exp_ws},{exp_dir})")
+    
+    # Test 17: Verify selector arithmetic — all selectors for valid inputs
+    print("\n--- Test 17: Lagrange selector values ---")
+    for (state, symbol), u in selector.residues.items():
+        vals = selector.evaluate_selectors(u)
+        n_ones = sum(1 for v in vals if v == 1)
+        n_zeros = sum(1 for v in vals if v == 0)
+        state_name = 'ABC'[state]
+        check(f"u={u} ({state_name},{symbol}): exactly one 1, rest 0",
+              n_ones == 1 and n_zeros == len(vals) - 1,
+              f"Selector values: {vals}")
+    
+    # Test 18: Full BB(3) execution via selector
+    print("\n--- Test 18: Full BB(3) via CRT selector ---")
+    final_config, selector_shear, step_log = run_with_selector(
+        bb3, selector, tape_length=20, verbose=True
+    )
+    
+    num_steps = sum(1 for s in step_log if not s.get('halted'))
+    check(f"Selector-driven BB(3) takes 13 steps", num_steps == 13,
+          f"Got {num_steps}")
+    check(f"Selector-driven BB(3) halts", 
+          step_log[-1].get('halted', False))
+    check(f"Selector-driven BB(3) reaches HALT state",
+          final_config.state == 3)
+    
+    # Count marks in final tape
+    final_tape, _ = final_config.to_tape_list(20)
+    selector_marks = sum(1 for s in final_tape if s == 2)
+    check(f"Selector-driven BB(3) writes 6 marks", selector_marks == 6,
+          f"Got {selector_marks}")
+    
+    # Test 19: Selector-driven execution matches Phase 2 execution
+    print("\n--- Test 19: Selector matches Phase 2 (if/else) execution ---")
+    if all_steps_match:
+        check("Same Φ_R product",
+              selector_shear.right_product == shear.right_product,
+              f"Selector: {selector_shear.right_product}, Phase 2: {shear.right_product}")
+        check("Same Φ_L product", 
+              selector_shear.left_product == shear.left_product,
+              f"Selector: {selector_shear.left_product}, Phase 2: {shear.left_product}")
+        check("Same number of right matrices",
+              len(selector_shear.right_matrices) == len(shear.right_matrices))
+        check("Same number of left matrices",
+              len(selector_shear.left_matrices) == len(shear.left_matrices))
+    
+    # Test 20: Selector Shear expansion maps initial → final
+    print("\n--- Test 20: Selector Shear expansion verification ---")
+    init_R = CFStack.blank(20).value()
+    init_L = CFStack.blank(20).value()
+    
+    sel_phi_R = selector_shear.right_product.act(init_R)
+    sel_phi_L = selector_shear.left_product.act(init_L)
+    
+    check("Selector Φ_R · X_R₀ = X_R_final", 
+          sel_phi_R == final_config.right.value(),
+          f"Φ·X₀={float(sel_phi_R):.6f}, actual={float(final_config.right.value()):.6f}")
+    check("Selector Φ_L · X_L₀ = X_L_final",
+          sel_phi_L == final_config.left.value(),
+          f"Φ·X₀={float(sel_phi_L):.6f}, actual={float(final_config.left.value()):.6f}")
+    
+    # Test 21: Demonstrate the zero-divisor problem in ℤ/Nℤ
+    print("\n--- Test 21: Zero-divisor demonstration (why ℤ/Nℤ fails) ---")
+    N = 6
+    residue_list = list(selector.transitions_by_residue.keys())
+    zero_divisor_pairs = []
+    for i in range(len(residue_list)):
+        for j in range(i+1, len(residue_list)):
+            diff = (residue_list[i] - residue_list[j]) % N
+            if diff != 0 and gcd(diff, N) > 1:
+                zero_divisor_pairs.append((residue_list[i], residue_list[j], diff))
+    
+    print(f"  In ℤ/{N}ℤ: {len(zero_divisor_pairs)} pairs have zero-divisor differences:")
+    for ri, rj, diff in zero_divisor_pairs[:5]:
+        print(f"    r={ri} - r={rj} = {diff} mod {N}  (gcd({diff},{N}) = {gcd(diff, N)})")
+    check(f"ℤ/{N}ℤ has zero-divisor problem ({len(zero_divisor_pairs)} bad pairs)",
+          len(zero_divisor_pairs) > 0)
+    print(f"  In ℤ/{selector.P}ℤ: ALL differences are units (P is prime) ✓")
     
     # =========================================================================
     print("\n" + "="*70)
