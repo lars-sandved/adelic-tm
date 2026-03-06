@@ -1,0 +1,43 @@
+{
+  "alphabet_size": 4,
+  "blank_symbol": 0,
+  "halt_states": [
+    "halt"
+  ],
+  "start_state": "even",
+  "states": [
+    "even",
+    "odd",
+    "halt"
+  ],
+  "transitions": [
+    {
+      "move": "R",
+      "next_state": "odd",
+      "read": 1,
+      "state": "even",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "even",
+      "read": 1,
+      "state": "odd",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "halt",
+      "read": 0,
+      "state": "even",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "halt",
+      "read": 0,
+      "state": "odd",
+      "write": 3
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "alphabet_size": 6,
+  "blank_symbol": 0,
+  "halt_states": [
+    "halt"
+  ],
+  "start_state": "mark_a",
+  "states": [
+    "mark_a",
+    "seek_sep",
+    "cleanup_rewind",
+    "seek_b",
+    "seek_output",
+    "unmark_b",
+    "return_to_b",
+    "rewind_to_a",
+    "cleanup_scan",
+    "halt"
+  ],
+  "transitions": [
+    {
+      "move": "R",
+      "next_state": "mark_a",
+      "read": 3,
+      "state": "mark_a",
+      "write": 3
+    },
+    {
+      "move": "R",
+      "next_state": "seek_sep",
+      "read": 1,
+      "state": "mark_a",
+      "write": 3
+    },
+    {
+      "move": "L",
+      "next_state": "cleanup_rewind",
+      "read": 2,
+      "state": "mark_a",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "seek_sep",
+      "read": 1,
+      "state": "seek_sep",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "seek_sep",
+      "read": 3,
+      "state": "seek_sep",
+      "write": 3
+    },
+    {
+      "move": "R",
+      "next_state": "seek_b",
+      "read": 2,
+      "state": "seek_sep",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "seek_b",
+      "read": 4,
+      "state": "seek_b",
+      "write": 4
+    },
+    {
+      "move": "R",
+      "next_state": "seek_output",
+      "read": 1,
+      "state": "seek_b",
+      "write": 4
+    },
+    {
+      "move": "L",
+      "next_state": "unmark_b",
+      "read": 5,
+      "state": "seek_b",
+      "write": 5
+    },
+    {
+      "move": "L",
+      "next_state": "unmark_b",
+      "read": 0,
+      "state": "seek_b",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "seek_output",
+      "read": 1,
+      "state": "seek_output",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "seek_output",
+      "read": 4,
+      "state": "seek_output",
+      "write": 4
+    },
+    {
+      "move": "R",
+      "next_state": "seek_output",
+      "read": 5,
+      "state": "seek_output",
+      "write": 5
+    },
+    {
+      "move": "L",
+      "next_state": "return_to_b",
+      "read": 0,
+      "state": "seek_output",
+      "write": 5
+    },
+    {
+      "move": "L",
+      "next_state": "return_to_b",
+      "read": 5,
+      "state": "return_to_b",
+      "write": 5
+    },
+    {
+      "move": "L",
+      "next_state": "return_to_b",
+      "read": 1,
+      "state": "return_to_b",
+      "write": 1
+    },
+    {
+      "move": "L",
+      "next_state": "return_to_b",
+      "read": 4,
+      "state": "return_to_b",
+      "write": 4
+    },
+    {
+      "move": "R",
+      "next_state": "seek_b",
+      "read": 2,
+      "state": "return_to_b",
+      "write": 2
+    },
+    {
+      "move": "L",
+      "next_state": "unmark_b",
+      "read": 4,
+      "state": "unmark_b",
+      "write": 1
+    },
+    {
+      "move": "L",
+      "next_state": "rewind_to_a",
+      "read": 2,
+      "state": "unmark_b",
+      "write": 2
+    },
+    {
+      "move": "L",
+      "next_state": "rewind_to_a",
+      "read": 1,
+      "state": "rewind_to_a",
+      "write": 1
+    },
+    {
+      "move": "L",
+      "next_state": "rewind_to_a",
+      "read": 3,
+      "state": "rewind_to_a",
+      "write": 3
+    },
+    {
+      "move": "R",
+      "next_state": "mark_a",
+      "read": 0,
+      "state": "rewind_to_a",
+      "write": 0
+    },
+    {
+      "move": "L",
+      "next_state": "cleanup_rewind",
+      "read": 3,
+      "state": "cleanup_rewind",
+      "write": 3
+    },
+    {
+      "move": "R",
+      "next_state": "cleanup_scan",
+      "read": 0,
+      "state": "cleanup_rewind",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "cleanup_scan",
+      "read": 3,
+      "state": "cleanup_scan",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "cleanup_scan",
+      "read": 2,
+      "state": "cleanup_scan",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "cleanup_scan",
+      "read": 1,
+      "state": "cleanup_scan",
+      "write": 0
+    },
+    {
+      "move": "R",
+      "next_state": "cleanup_scan",
+      "read": 5,
+      "state": "cleanup_scan",
+      "write": 1
+    },
+    {
+      "move": "R",
+      "next_state": "halt",
+      "read": 0,
+      "state": "cleanup_scan",
+      "write": 0
+    }
+  ]
+}
