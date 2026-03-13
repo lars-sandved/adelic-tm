@@ -367,6 +367,84 @@ class MobiusComputer:
             raise ValueError("No computation trace to export (run first)")
         return _lean_export(matrices, machine_name)
 
+    def export_trace_json(self) -> dict:
+        """Export the full computation trace as a JSON-serialisable dict.
+
+        Designed for the web visualiser. Includes machine spec, every step's
+        tape state (external symbols), matrices, CF values, and summary data.
+        """
+        if self._result is None:
+            raise ValueError("No result yet (call run() first)")
+        r = self._result
+        m = self.machine
+
+        def _frac(f: Fraction | None) -> str | None:
+            return f"{f.numerator}/{f.denominator}" if f is not None else None
+
+        steps = []
+        for rec in r.trace:
+            steps.append({
+                "step": rec.step,
+                "preState": rec.pre_state,
+                "postState": rec.post_state,
+                "readSymbol": rec.read_symbol,
+                "writeSymbol": rec.write_symbol,
+                "move": rec.move,
+                "shearFactor": {"kind": rec.shear_factor.kind, "k": rec.shear_factor.k},
+                "matrix": rec.matrix_2x2,
+                "preLeft": [m.external_symbol(s) for s in rec.pre_left],
+                "preRight": [m.external_symbol(s) for s in rec.pre_right],
+                "postLeft": [m.external_symbol(s) for s in rec.post_left],
+                "postRight": [m.external_symbol(s) for s in rec.post_right],
+                "cf": {
+                    "preLeft": _frac(rec.pre_left_cf),
+                    "preRight": _frac(rec.pre_right_cf),
+                    "postLeft": _frac(rec.post_left_cf),
+                    "postRight": _frac(rec.post_right_cf),
+                },
+                "selectorMode": rec.selector_mode,
+            })
+
+        phi_r = self._shear.phi_R
+        phi_l = self._shear.phi_L
+
+        return {
+            "machine": {
+                "alphabetSize": m.alphabet_size,
+                "blankSymbol": m.blank_symbol,
+                "states": m.states,
+                "startState": m.start_state,
+                "haltStates": m.halt_states,
+                "transitions": [
+                    {
+                        "state": t.state, "read": t.read,
+                        "write": t.write, "move": t.move,
+                        "nextState": t.next_state,
+                    }
+                    for t in m.transitions
+                ],
+            },
+            "result": {
+                "status": r.status,
+                "steps": r.steps,
+                "finalLeft": [m.external_symbol(s) for s in r.final_left],
+                "finalRight": [m.external_symbol(s) for s in r.final_right],
+                "finalState": r.final_state,
+            },
+            "emet": {
+                "aleph": r.emet.aleph,
+                "mem": r.emet.mem,
+                "tav": r.emet.tav,
+                "isEmet": r.emet.is_emet,
+                "notes": r.emet.notes,
+            },
+            "shear": {
+                "phiR": phi_r.as_list() if phi_r else None,
+                "phiL": phi_l.as_list() if phi_l else None,
+            },
+            "trace": steps,
+        }
+
     def final_tape_external(self) -> tuple[list[int], list[int]]:
         """Return final (left, right) stacks in external symbols."""
         if self._result is None:

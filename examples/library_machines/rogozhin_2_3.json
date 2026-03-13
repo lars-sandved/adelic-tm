@@ -1,0 +1,54 @@
+{
+  "alphabet_size": 3,
+  "blank_symbol": 0,
+  "halt_states": [],
+  "start_state": "q1",
+  "states": [
+    "q1",
+    "q2"
+  ],
+  "transitions": [
+    {
+      "move": "R",
+      "next_state": "q2",
+      "read": 0,
+      "state": "q1",
+      "write": 1
+    },
+    {
+      "move": "L",
+      "next_state": "q1",
+      "read": 1,
+      "state": "q1",
+      "write": 2
+    },
+    {
+      "move": "L",
+      "next_state": "q1",
+      "read": 2,
+      "state": "q1",
+      "write": 1
+    },
+    {
+      "move": "L",
+      "next_state": "q1",
+      "read": 0,
+      "state": "q2",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "q2",
+      "read": 1,
+      "state": "q2",
+      "write": 2
+    },
+    {
+      "move": "R",
+      "next_state": "q2",
+      "read": 2,
+      "state": "q2",
+      "write": 0
+    }
+  ]
+}
