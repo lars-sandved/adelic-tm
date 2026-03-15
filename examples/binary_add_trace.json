@@ -1,0 +1,2552 @@
+{
+  "machine": {
+    "alphabetSize": 7,
+    "blankSymbol": 0,
+    "states": [
+      "return_c0",
+      "fetch_a_c0",
+      "return_c1",
+      "fetch_a_c1",
+      "seek_sep_a0c0",
+      "seek_sep_a1c0",
+      "endA_seek_b_c0",
+      "seek_sep_a0c1",
+      "seek_sep_a1c1",
+      "endA_seek_b_c1",
+      "seek_b_a0c0",
+      "seek_b_a0c1",
+      "seek_b_a1c0",
+      "seek_b_a1c1",
+      "cleanup_rewind",
+      "cleanup_scan",
+      "halt"
+    ],
+    "startState": "fetch_a_c0",
+    "haltStates": [
+      "halt"
+    ],
+    "transitions": [
+      {
+        "state": "return_c0",
+        "read": 1,
+        "write": 1,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 2,
+        "write": 2,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 3,
+        "write": 3,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 4,
+        "write": 4,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 5,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 6,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "return_c0",
+        "read": 0,
+        "write": 0,
+        "move": "R",
+        "nextState": "fetch_a_c0"
+      },
+      {
+        "state": "return_c1",
+        "read": 1,
+        "write": 1,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 2,
+        "write": 2,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 3,
+        "write": 3,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 4,
+        "write": 4,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 5,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 6,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "return_c1",
+        "read": 0,
+        "write": 0,
+        "move": "R",
+        "nextState": "fetch_a_c1"
+      },
+      {
+        "state": "fetch_a_c0",
+        "read": 4,
+        "write": 4,
+        "move": "R",
+        "nextState": "fetch_a_c0"
+      },
+      {
+        "state": "fetch_a_c0",
+        "read": 1,
+        "write": 4,
+        "move": "R",
+        "nextState": "seek_sep_a0c0"
+      },
+      {
+        "state": "fetch_a_c0",
+        "read": 2,
+        "write": 4,
+        "move": "R",
+        "nextState": "seek_sep_a1c0"
+      },
+      {
+        "state": "fetch_a_c0",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "endA_seek_b_c0"
+      },
+      {
+        "state": "fetch_a_c1",
+        "read": 4,
+        "write": 4,
+        "move": "R",
+        "nextState": "fetch_a_c1"
+      },
+      {
+        "state": "fetch_a_c1",
+        "read": 1,
+        "write": 4,
+        "move": "R",
+        "nextState": "seek_sep_a0c1"
+      },
+      {
+        "state": "fetch_a_c1",
+        "read": 2,
+        "write": 4,
+        "move": "R",
+        "nextState": "seek_sep_a1c1"
+      },
+      {
+        "state": "fetch_a_c1",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "endA_seek_b_c1"
+      },
+      {
+        "state": "seek_sep_a0c0",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "seek_sep_a0c0"
+      },
+      {
+        "state": "seek_sep_a0c0",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "seek_sep_a0c0"
+      },
+      {
+        "state": "seek_sep_a0c0",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "seek_b_a0c0"
+      },
+      {
+        "state": "seek_sep_a0c1",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "seek_sep_a0c1"
+      },
+      {
+        "state": "seek_sep_a0c1",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "seek_sep_a0c1"
+      },
+      {
+        "state": "seek_sep_a0c1",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "seek_b_a0c1"
+      },
+      {
+        "state": "seek_sep_a1c0",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "seek_sep_a1c0"
+      },
+      {
+        "state": "seek_sep_a1c0",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "seek_sep_a1c0"
+      },
+      {
+        "state": "seek_sep_a1c0",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "seek_b_a1c0"
+      },
+      {
+        "state": "seek_sep_a1c1",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "seek_sep_a1c1"
+      },
+      {
+        "state": "seek_sep_a1c1",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "seek_sep_a1c1"
+      },
+      {
+        "state": "seek_sep_a1c1",
+        "read": 3,
+        "write": 3,
+        "move": "R",
+        "nextState": "seek_b_a1c1"
+      },
+      {
+        "state": "seek_b_a0c0",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "seek_b_a0c0"
+      },
+      {
+        "state": "seek_b_a0c0",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "seek_b_a0c0"
+      },
+      {
+        "state": "seek_b_a0c0",
+        "read": 1,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a0c0",
+        "read": 2,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a0c0",
+        "read": 0,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a0c1",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "seek_b_a0c1"
+      },
+      {
+        "state": "seek_b_a0c1",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "seek_b_a0c1"
+      },
+      {
+        "state": "seek_b_a0c1",
+        "read": 1,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a0c1",
+        "read": 2,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "seek_b_a0c1",
+        "read": 0,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a1c0",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "seek_b_a1c0"
+      },
+      {
+        "state": "seek_b_a1c0",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "seek_b_a1c0"
+      },
+      {
+        "state": "seek_b_a1c0",
+        "read": 1,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a1c0",
+        "read": 2,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "seek_b_a1c0",
+        "read": 0,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c0"
+      },
+      {
+        "state": "seek_b_a1c1",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "seek_b_a1c1"
+      },
+      {
+        "state": "seek_b_a1c1",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "seek_b_a1c1"
+      },
+      {
+        "state": "seek_b_a1c1",
+        "read": 1,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "seek_b_a1c1",
+        "read": 2,
+        "write": 6,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "seek_b_a1c1",
+        "read": 0,
+        "write": 5,
+        "move": "L",
+        "nextState": "return_c1"
+      },
+      {
+        "state": "endA_seek_b_c0",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "endA_seek_b_c0"
+      },
+      {
+        "state": "endA_seek_b_c0",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "endA_seek_b_c0"
+      },
+      {
+        "state": "endA_seek_b_c0",
+        "read": 1,
+        "write": 1,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "endA_seek_b_c0",
+        "read": 2,
+        "write": 2,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "endA_seek_b_c0",
+        "read": 0,
+        "write": 0,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "endA_seek_b_c1",
+        "read": 5,
+        "write": 5,
+        "move": "R",
+        "nextState": "endA_seek_b_c1"
+      },
+      {
+        "state": "endA_seek_b_c1",
+        "read": 6,
+        "write": 6,
+        "move": "R",
+        "nextState": "endA_seek_b_c1"
+      },
+      {
+        "state": "endA_seek_b_c1",
+        "read": 1,
+        "write": 6,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "endA_seek_b_c1",
+        "read": 2,
+        "write": 5,
+        "move": "R",
+        "nextState": "endA_seek_b_c1"
+      },
+      {
+        "state": "endA_seek_b_c1",
+        "read": 0,
+        "write": 6,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 1,
+        "write": 1,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 2,
+        "write": 2,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 3,
+        "write": 3,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 4,
+        "write": 4,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 5,
+        "write": 5,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 6,
+        "write": 6,
+        "move": "L",
+        "nextState": "cleanup_rewind"
+      },
+      {
+        "state": "cleanup_rewind",
+        "read": 0,
+        "write": 0,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 4,
+        "write": 0,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 3,
+        "write": 0,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 5,
+        "write": 1,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 6,
+        "write": 2,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "cleanup_scan"
+      },
+      {
+        "state": "cleanup_scan",
+        "read": 0,
+        "write": 0,
+        "move": "R",
+        "nextState": "halt"
+      }
+    ]
+  },
+  "result": {
+    "status": "HALT",
+    "steps": 40,
+    "finalLeft": [
+      0,
+      2,
+      1,
+      1,
+      1
+    ],
+    "finalRight": [],
+    "finalState": "halt"
+  },
+  "emet": {
+    "aleph": true,
+    "mem": true,
+    "tav": true,
+    "isEmet": true,
+    "notes": [
+      "Mem via \ud835\udd3d_127 (prime field selector)"
+    ]
+  },
+  "shear": {
+    "phiR": [
+      [
+        430,
+        -1423
+      ],
+      [
+        -763,
+        2525
+      ]
+    ],
+    "phiL": [
+      [
+        203,
+        128
+      ],
+      [
+        157,
+        99
+      ]
+    ]
+  },
+  "trace": [
+    {
+      "step": 0,
+      "preState": "fetch_a_c0",
+      "postState": "seek_sep_a1c0",
+      "readSymbol": 2,
+      "writeSymbol": 4,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        2,
+        2,
+        3,
+        2,
+        1,
+        2
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        2,
+        3,
+        2,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "1423/430",
+        "postLeft": "6/1",
+        "postRight": "430/133"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 1,
+      "preState": "seek_sep_a1c0",
+      "postState": "seek_sep_a1c0",
+      "readSymbol": 2,
+      "writeSymbol": 2,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        2,
+        3,
+        2,
+        1,
+        2
+      ],
+      "postLeft": [
+        2,
+        4
+      ],
+      "postRight": [
+        3,
+        2,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "430/133",
+        "postLeft": "19/6",
+        "postRight": "133/31"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 2,
+      "preState": "seek_sep_a1c0",
+      "postState": "seek_b_a1c0",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 4
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -4
+        ]
+      ],
+      "preLeft": [
+        2,
+        4
+      ],
+      "preRight": [
+        3,
+        2,
+        1,
+        2
+      ],
+      "postLeft": [
+        3,
+        2,
+        4
+      ],
+      "postRight": [
+        2,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "19/6",
+        "preRight": "133/31",
+        "postLeft": "82/19",
+        "postRight": "31/9"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 3,
+      "preState": "seek_b_a1c0",
+      "postState": "return_c1",
+      "readSymbol": 2,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        3,
+        2,
+        4
+      ],
+      "preRight": [
+        2,
+        1,
+        2
+      ],
+      "postLeft": [
+        2,
+        4
+      ],
+      "postRight": [
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "82/19",
+        "preRight": "31/9",
+        "postLeft": "19/6",
+        "postRight": "241/58"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 4,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 4
+      },
+      "matrix": [
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        2,
+        4
+      ],
+      "preRight": [
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "19/6",
+        "preRight": "241/58",
+        "postLeft": "6/1",
+        "postRight": "781/241"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 5,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 2,
+      "writeSymbol": 2,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 3
+      },
+      "matrix": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "781/241",
+        "postLeft": "1/1",
+        "postRight": "4146/781"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 6,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 5
+      },
+      "matrix": [
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        0,
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "4146/781",
+        "postLeft": "1/1",
+        "postRight": "4927/4146"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 7,
+      "preState": "return_c1",
+      "postState": "fetch_a_c1",
+      "readSymbol": 0,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 1
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        0,
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "4927/4146",
+        "postLeft": "1/1",
+        "postRight": "4146/781"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 8,
+      "preState": "fetch_a_c1",
+      "postState": "fetch_a_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 5
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -5
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "4146/781",
+        "postLeft": "6/1",
+        "postRight": "781/241"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 9,
+      "preState": "fetch_a_c1",
+      "postState": "seek_sep_a1c1",
+      "readSymbol": 2,
+      "writeSymbol": 4,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        2,
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [
+        4,
+        4
+      ],
+      "postRight": [
+        3,
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "781/241",
+        "postLeft": "31/6",
+        "postRight": "241/58"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 10,
+      "preState": "seek_sep_a1c1",
+      "postState": "seek_b_a1c1",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 4
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -4
+        ]
+      ],
+      "preLeft": [
+        4,
+        4
+      ],
+      "preRight": [
+        3,
+        5,
+        1,
+        2
+      ],
+      "postLeft": [
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "31/6",
+        "preRight": "241/58",
+        "postLeft": "130/31",
+        "postRight": "58/9"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 11,
+      "preState": "seek_b_a1c1",
+      "postState": "seek_b_a1c1",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        1,
+        2
+      ],
+      "postLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        1,
+        2
+      ],
+      "cf": {
+        "preLeft": "130/31",
+        "preRight": "58/9",
+        "postLeft": "811/130",
+        "postRight": "9/4"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 12,
+      "preState": "seek_b_a1c1",
+      "postState": "return_c1",
+      "readSymbol": 1,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        1,
+        2
+      ],
+      "postLeft": [
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "811/130",
+        "preRight": "9/4",
+        "postLeft": "130/31",
+        "postRight": "154/25"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 13,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        4,
+        4
+      ],
+      "postRight": [
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "130/31",
+        "preRight": "154/25",
+        "postLeft": "31/6",
+        "postRight": "641/154"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 14,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 4
+      },
+      "matrix": [
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        4,
+        4
+      ],
+      "preRight": [
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "31/6",
+        "preRight": "641/154",
+        "postLeft": "6/1",
+        "postRight": "3359/641"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 15,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 5
+      },
+      "matrix": [
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "3359/641",
+        "postLeft": "1/1",
+        "postRight": "17436/3359"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 16,
+      "preState": "return_c1",
+      "postState": "return_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 5
+      },
+      "matrix": [
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        0,
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "17436/3359",
+        "postLeft": "1/1",
+        "postRight": "20795/17436"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 17,
+      "preState": "return_c1",
+      "postState": "fetch_a_c1",
+      "readSymbol": 0,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 1
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        0,
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "20795/17436",
+        "postLeft": "1/1",
+        "postRight": "17436/3359"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 18,
+      "preState": "fetch_a_c1",
+      "postState": "fetch_a_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 5
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -5
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "17436/3359",
+        "postLeft": "6/1",
+        "postRight": "3359/641"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 19,
+      "preState": "fetch_a_c1",
+      "postState": "fetch_a_c1",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 5
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -5
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        4,
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        4,
+        4
+      ],
+      "postRight": [
+        3,
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "3359/641",
+        "postLeft": "31/6",
+        "postRight": "641/154"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 20,
+      "preState": "fetch_a_c1",
+      "postState": "endA_seek_b_c1",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 4
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -4
+        ]
+      ],
+      "preLeft": [
+        4,
+        4
+      ],
+      "preRight": [
+        3,
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "31/6",
+        "preRight": "641/154",
+        "postLeft": "130/31",
+        "postRight": "154/25"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 21,
+      "preState": "endA_seek_b_c1",
+      "postState": "endA_seek_b_c1",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        5,
+        2
+      ],
+      "postLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        2
+      ],
+      "cf": {
+        "preLeft": "130/31",
+        "preRight": "154/25",
+        "postLeft": "811/130",
+        "postRight": "25/4"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 22,
+      "preState": "endA_seek_b_c1",
+      "postState": "endA_seek_b_c1",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        2
+      ],
+      "postLeft": [
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        2
+      ],
+      "cf": {
+        "preLeft": "811/130",
+        "preRight": "25/4",
+        "postLeft": "4996/811",
+        "postRight": "4/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 23,
+      "preState": "endA_seek_b_c1",
+      "postState": "endA_seek_b_c1",
+      "readSymbol": 2,
+      "writeSymbol": 5,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        2
+      ],
+      "postLeft": [
+        5,
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "4996/811",
+        "preRight": "4/1",
+        "postLeft": "30787/4996",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 24,
+      "preState": "endA_seek_b_c1",
+      "postState": "cleanup_rewind",
+      "readSymbol": 0,
+      "writeSymbol": 6,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 7
+      },
+      "matrix": [
+        [
+          7,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        5,
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [],
+      "postLeft": [
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "30787/4996",
+        "preRight": "1/1",
+        "postLeft": "4996/811",
+        "postRight": "49/8"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 25,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        5,
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        6
+      ],
+      "postLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "4996/811",
+        "preRight": "49/8",
+        "postLeft": "811/130",
+        "postRight": "302/49"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 26,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        5,
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        5,
+        6
+      ],
+      "postLeft": [
+        3,
+        4,
+        4
+      ],
+      "postRight": [
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "811/130",
+        "preRight": "302/49",
+        "postLeft": "130/31",
+        "postRight": "1861/302"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 27,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 5,
+      "writeSymbol": 5,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 6
+      },
+      "matrix": [
+        [
+          6,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        3,
+        4,
+        4
+      ],
+      "preRight": [
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [
+        4,
+        4
+      ],
+      "postRight": [
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "130/31",
+        "preRight": "1861/302",
+        "postLeft": "31/6",
+        "postRight": "7746/1861"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 28,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 3,
+      "writeSymbol": 3,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 4
+      },
+      "matrix": [
+        [
+          4,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        4,
+        4
+      ],
+      "preRight": [
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [
+        4
+      ],
+      "postRight": [
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "31/6",
+        "preRight": "7746/1861",
+        "postLeft": "6/1",
+        "postRight": "40591/7746"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 29,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 5
+      },
+      "matrix": [
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        4
+      ],
+      "preRight": [
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "6/1",
+        "preRight": "40591/7746",
+        "postLeft": "1/1",
+        "postRight": "210701/40591"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 30,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_rewind",
+      "readSymbol": 4,
+      "writeSymbol": 4,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 5
+      },
+      "matrix": [
+        [
+          5,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        0,
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "210701/40591",
+        "postLeft": "1/1",
+        "postRight": "251292/210701"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 31,
+      "preState": "cleanup_rewind",
+      "postState": "cleanup_scan",
+      "readSymbol": 0,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 1
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        0,
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "251292/210701",
+        "postLeft": "1/1",
+        "postRight": "210701/40591"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 32,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 4,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 5
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -5
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "210701/40591",
+        "postLeft": "1/1",
+        "postRight": "40591/7746"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 33,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 4,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 5
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -5
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        4,
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "40591/7746",
+        "postLeft": "1/1",
+        "postRight": "7746/1861"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 34,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 3,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 4
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -4
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        3,
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [],
+      "postRight": [
+        5,
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "7746/1861",
+        "postLeft": "1/1",
+        "postRight": "1861/302"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 35,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 5,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        5,
+        5,
+        5,
+        6
+      ],
+      "postLeft": [
+        1
+      ],
+      "postRight": [
+        5,
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "1861/302",
+        "postLeft": "3/1",
+        "postRight": "302/49"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 36,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 5,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [
+        1
+      ],
+      "preRight": [
+        5,
+        5,
+        6
+      ],
+      "postLeft": [
+        1,
+        1
+      ],
+      "postRight": [
+        5,
+        6
+      ],
+      "cf": {
+        "preLeft": "3/1",
+        "preRight": "302/49",
+        "postLeft": "7/3",
+        "postRight": "49/8"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 37,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 5,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 6
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -6
+        ]
+      ],
+      "preLeft": [
+        1,
+        1
+      ],
+      "preRight": [
+        5,
+        6
+      ],
+      "postLeft": [
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        6
+      ],
+      "cf": {
+        "preLeft": "7/3",
+        "preRight": "49/8",
+        "postLeft": "17/7",
+        "postRight": "8/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 38,
+      "preState": "cleanup_scan",
+      "postState": "cleanup_scan",
+      "readSymbol": 6,
+      "writeSymbol": 2,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 7
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -7
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        6
+      ],
+      "postLeft": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "17/7",
+        "preRight": "8/1",
+        "postLeft": "58/17",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 39,
+      "preState": "cleanup_scan",
+      "postState": "halt",
+      "readSymbol": 0,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 1
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "preLeft": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "preRight": [],
+      "postLeft": [
+        0,
+        2,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "58/17",
+        "preRight": "1/1",
+        "postLeft": "75/58",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    }
+  ]
+}

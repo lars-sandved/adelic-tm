@@ -1,0 +1,700 @@
+{
+  "machine": {
+    "alphabetSize": 3,
+    "blankSymbol": 0,
+    "states": [
+      "seek_sep",
+      "check_right",
+      "promote_left",
+      "at_sep",
+      "erase_sep",
+      "halt"
+    ],
+    "startState": "seek_sep",
+    "haltStates": [
+      "halt"
+    ],
+    "transitions": [
+      {
+        "state": "seek_sep",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "seek_sep"
+      },
+      {
+        "state": "seek_sep",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "check_right"
+      },
+      {
+        "state": "check_right",
+        "read": 1,
+        "write": 2,
+        "move": "L",
+        "nextState": "promote_left"
+      },
+      {
+        "state": "check_right",
+        "read": 0,
+        "write": 0,
+        "move": "L",
+        "nextState": "erase_sep"
+      },
+      {
+        "state": "promote_left",
+        "read": 2,
+        "write": 1,
+        "move": "R",
+        "nextState": "at_sep"
+      },
+      {
+        "state": "at_sep",
+        "read": 2,
+        "write": 2,
+        "move": "R",
+        "nextState": "check_right"
+      },
+      {
+        "state": "erase_sep",
+        "read": 2,
+        "write": 0,
+        "move": "R",
+        "nextState": "halt"
+      }
+    ]
+  },
+  "result": {
+    "status": "HALT",
+    "steps": 12,
+    "finalLeft": [
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "finalRight": [],
+    "finalState": "halt"
+  },
+  "emet": {
+    "aleph": true,
+    "mem": true,
+    "tav": true,
+    "isEmet": true,
+    "notes": [
+      "Mem via \ud835\udd3d_19 (prime field selector)"
+    ]
+  },
+  "shear": {
+    "phiR": [
+      [
+        39,
+        -94
+      ],
+      [
+        -95,
+        229
+      ]
+    ],
+    "phiL": [
+      [
+        99,
+        41
+      ],
+      [
+        70,
+        29
+      ]
+    ]
+  },
+  "trace": [
+    {
+      "step": 0,
+      "preState": "seek_sep",
+      "postState": "seek_sep",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        1,
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "postLeft": [
+        1
+      ],
+      "postRight": [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "323/134",
+        "postLeft": "3/1",
+        "postRight": "134/55"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 1,
+      "preState": "seek_sep",
+      "postState": "seek_sep",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1
+      ],
+      "preRight": [
+        1,
+        1,
+        2,
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1
+      ],
+      "postRight": [
+        1,
+        2,
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "3/1",
+        "preRight": "134/55",
+        "postLeft": "7/3",
+        "postRight": "55/24"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 2,
+      "preState": "seek_sep",
+      "postState": "seek_sep",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1,
+        1
+      ],
+      "preRight": [
+        1,
+        2,
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2,
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "7/3",
+        "preRight": "55/24",
+        "postLeft": "17/7",
+        "postRight": "24/7"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 3,
+      "preState": "seek_sep",
+      "postState": "check_right",
+      "readSymbol": 2,
+      "writeSymbol": 2,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2,
+        1,
+        1
+      ],
+      "postLeft": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "17/7",
+        "preRight": "24/7",
+        "postLeft": "58/17",
+        "postRight": "7/3"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 4,
+      "preState": "check_right",
+      "postState": "promote_left",
+      "readSymbol": 1,
+      "writeSymbol": 2,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 3
+      },
+      "matrix": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        2,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2,
+        2,
+        1
+      ],
+      "cf": {
+        "preLeft": "58/17",
+        "preRight": "7/3",
+        "postLeft": "17/7",
+        "postRight": "33/10"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 5,
+      "preState": "promote_left",
+      "postState": "at_sep",
+      "readSymbol": 2,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2,
+        2,
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2,
+        1
+      ],
+      "cf": {
+        "preLeft": "17/7",
+        "preRight": "33/10",
+        "postLeft": "41/17",
+        "postRight": "10/3"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 6,
+      "preState": "at_sep",
+      "postState": "check_right",
+      "readSymbol": 2,
+      "writeSymbol": 2,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2,
+        1
+      ],
+      "postLeft": [
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        1
+      ],
+      "cf": {
+        "preLeft": "41/17",
+        "preRight": "10/3",
+        "postLeft": "140/41",
+        "postRight": "3/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 7,
+      "preState": "check_right",
+      "postState": "promote_left",
+      "readSymbol": 1,
+      "writeSymbol": 2,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 3
+      },
+      "matrix": [
+        [
+          3,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2,
+        2
+      ],
+      "cf": {
+        "preLeft": "140/41",
+        "preRight": "3/1",
+        "postLeft": "41/17",
+        "postRight": "13/4"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 8,
+      "preState": "promote_left",
+      "postState": "at_sep",
+      "readSymbol": 2,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2,
+        2
+      ],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2
+      ],
+      "cf": {
+        "preLeft": "41/17",
+        "preRight": "13/4",
+        "postLeft": "99/41",
+        "postRight": "4/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 9,
+      "preState": "at_sep",
+      "postState": "check_right",
+      "readSymbol": 2,
+      "writeSymbol": 2,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2
+      ],
+      "postLeft": [
+        2,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "99/41",
+        "preRight": "4/1",
+        "postLeft": "338/99",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 10,
+      "preState": "check_right",
+      "postState": "erase_sep",
+      "readSymbol": 0,
+      "writeSymbol": 0,
+      "move": "L",
+      "shearFactor": {
+        "kind": "push",
+        "k": 1
+      },
+      "matrix": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "preLeft": [
+        2,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        2
+      ],
+      "cf": {
+        "preLeft": "338/99",
+        "preRight": "1/1",
+        "postLeft": "99/41",
+        "postRight": "4/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 11,
+      "preState": "erase_sep",
+      "postState": "halt",
+      "readSymbol": 2,
+      "writeSymbol": 0,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 3
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -3
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        2
+      ],
+      "postLeft": [
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "99/41",
+        "preRight": "4/1",
+        "postLeft": "140/99",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    }
+  ]
+}

@@ -1,0 +1,371 @@
+{
+  "machine": {
+    "alphabetSize": 4,
+    "blankSymbol": 0,
+    "states": [
+      "even",
+      "odd",
+      "halt"
+    ],
+    "startState": "even",
+    "haltStates": [
+      "halt"
+    ],
+    "transitions": [
+      {
+        "state": "even",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "odd"
+      },
+      {
+        "state": "odd",
+        "read": 1,
+        "write": 1,
+        "move": "R",
+        "nextState": "even"
+      },
+      {
+        "state": "even",
+        "read": 0,
+        "write": 2,
+        "move": "R",
+        "nextState": "halt"
+      },
+      {
+        "state": "odd",
+        "read": 0,
+        "write": 3,
+        "move": "R",
+        "nextState": "halt"
+      }
+    ]
+  },
+  "result": {
+    "status": "HALT",
+    "steps": 6,
+    "finalLeft": [
+      3,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "finalRight": [],
+    "finalState": "halt"
+  },
+  "emet": {
+    "aleph": true,
+    "mem": true,
+    "tav": true,
+    "isEmet": true,
+    "notes": [
+      "Mem via \ud835\udd3d_13 (prime field selector)"
+    ]
+  },
+  "shear": {
+    "phiR": [
+      [
+        29,
+        -70
+      ],
+      [
+        -41,
+        99
+      ]
+    ],
+    "phiL": [
+      [
+        309,
+        128
+      ],
+      [
+        70,
+        29
+      ]
+    ]
+  },
+  "trace": [
+    {
+      "step": 0,
+      "preState": "even",
+      "postState": "odd",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [],
+      "preRight": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postLeft": [
+        1
+      ],
+      "postRight": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "1/1",
+        "preRight": "99/41",
+        "postLeft": "3/1",
+        "postRight": "41/17"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 1,
+      "preState": "odd",
+      "postState": "even",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1
+      ],
+      "preRight": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1
+      ],
+      "postRight": [
+        1,
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "3/1",
+        "preRight": "41/17",
+        "postLeft": "7/3",
+        "postRight": "17/7"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 2,
+      "preState": "even",
+      "postState": "odd",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1,
+        1
+      ],
+      "preRight": [
+        1,
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        1,
+        1
+      ],
+      "cf": {
+        "preLeft": "7/3",
+        "preRight": "17/7",
+        "postLeft": "17/7",
+        "postRight": "7/3"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 3,
+      "preState": "odd",
+      "postState": "even",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        1,
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [
+        1
+      ],
+      "cf": {
+        "preLeft": "17/7",
+        "preRight": "7/3",
+        "postLeft": "41/17",
+        "postRight": "3/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 4,
+      "preState": "even",
+      "postState": "odd",
+      "readSymbol": 1,
+      "writeSymbol": 1,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 2
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -2
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [
+        1
+      ],
+      "postLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "41/17",
+        "preRight": "3/1",
+        "postLeft": "99/41",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    },
+    {
+      "step": 5,
+      "preState": "odd",
+      "postState": "halt",
+      "readSymbol": 0,
+      "writeSymbol": 3,
+      "move": "R",
+      "shearFactor": {
+        "kind": "pop",
+        "k": 1
+      },
+      "matrix": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          -1
+        ]
+      ],
+      "preLeft": [
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "preRight": [],
+      "postLeft": [
+        3,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "postRight": [],
+      "cf": {
+        "preLeft": "99/41",
+        "preRight": "1/1",
+        "postLeft": "437/99",
+        "postRight": "1/1"
+      },
+      "selectorMode": "prime"
+    }
+  ]
+}
